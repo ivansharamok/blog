@@ -1,0 +1,16 @@
+{
+    "scwdps":[
+        {
+            "role" : "appcd",
+            "archiveXml" : "aM.App.archive.xml",
+            "parametersXml": "aM.CD.parameters.xml",
+            "sccpls" : ["Sitecore.Cloud.RoleSpecific_CD.sccpl", "Sitecore.Cloud.Redis_CD.sccpl", "Sitecore.Cloud.DisableAnalytics.sccpl", "Sitecore.Cloud.Thundercracker_CD.sccpl", "Sitecore.Cloud.Security_CD.sccpl"]
+        },
+        {
+            "role" : "appcm",
+            "archiveXml" : "aM.App.archive.xml",
+            "parametersXml": "aM.CM.parameters.xml",
+            "sccpls" : ["Sitecore.Cloud.RoleSpecific_CM.sccpl", "Sitecore.Cloud.DisableAnalytics.sccpl", "Sitecore.Cloud.HttpsRedirection.sccpl", "Sitecore.Cloud.IPSecurity.sccpl"]
+        }
+    ]
+}
