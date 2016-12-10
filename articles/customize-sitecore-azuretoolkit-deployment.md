@@ -50,21 +50,21 @@ Where as the other type describes `role specific` configurations. Here is exampl
 }
 ```
 Example:  
-  * The [common.app.packaging.config.json](https://github.com/ivansharamok/Content/resources/scripts/sitecore-on-azure/configs/common.app.packaging.config.json) file represents common configuration for deployment type that does not create and configure Sitecore databases. 
-  * The [am.packaging.config.json](https://github.com/ivansharamok/Content/resources/scripts/sitecore-on-azure/configs/am.packaging.config.json) file represents configuration for AM type deployment. 
+  * The [common.app.packaging.config.json](https://github.com/ivansharamok/Content/blob/master/articles/resources/scripts/sitecore-on-azure/configs/common.app.packaging.config.json) file represents common configuration for deployment type that does not create and configure Sitecore databases. 
+  * The [am.packaging.config.json](https://github.com/ivansharamok/Content/blob/master/articles/resources/scripts/sitecore-on-azure/configs/am.packaging.config.json) file represents configuration for AM type deployment. 
 
-You can see more examples at [sitecore-on-azure/configs](https://github.com/ivansharamok/Content/resources/scripts/sitecore-on-azure/configs) folder.
+You can see more examples at [sitecore-on-azure/configs](https://github.com/ivansharamok/Content/blob/master/articles/resources/scripts/sitecore-on-azure/configs) folder.
 
 ### MSDeploy configs
 
 These `XML` files represent `MSDeploy manifest` (archive.xml) and `MSDeploy parameters` (parameters.xml) configurations. The `archive.xml` contains descriptions of SQL databases, SQL scripts and IIS application. Whereas `parameters.xml` has list of parameters that can be used to configure your application during the deployment process. For instance, set database connection strings or use `sitecore admin password` variable to set sitecore admin user password etc.
 
 Example:  
-  * The [aM.App.archive.xml](https://github.com/ivansharamok/Content/resources/scripts/sitecore-on-azure/msdeployxmls/aM.App.archive.xml) file describes MSDeploy manifest for AM type deployment.
-  * The [aM.CM.parameters.xml](https://github.com/ivansharamok/Content/resources/scripts/sitecore-on-azure/msdeployxmls/aM.CM.parameters.xml) file describes MSDeploy parameters for `CM` role of AM type deployment.
-  * The [aM.CD.parameters.xml](https://github.com/ivansharamok/Content/resources/scripts/sitecore-on-azure/msdeployxmls/aM.CD.parameters.xml) file describes MSDeploy parameters for `CD` role of AM type deployment.
+  * The [aM.App.archive.xml](https://github.com/ivansharamok/Content/blob/master/articles/resources/scripts/sitecore-on-azure/msdeployxmls/aM.App.archive.xml) file describes MSDeploy manifest for AM type deployment.
+  * The [aM.CM.parameters.xml](https://github.com/ivansharamok/Content/blob/master/articles/resources/scripts/sitecore-on-azure/msdeployxmls/aM.CM.parameters.xml) file describes MSDeploy parameters for `CM` role of AM type deployment.
+  * The [aM.CD.parameters.xml](https://github.com/ivansharamok/Content/blob/master/articles/resources/scripts/sitecore-on-azure/msdeployxmls/aM.CD.parameters.xml) file describes MSDeploy parameters for `CD` role of AM type deployment.
 
-You can see more MSDeploy configuration examples at [sitecore-on-azure/msdeployxmls](https://github.com/ivansharamok/Content/resources/scripts/sitecore-on-azure/configs/msdeployxmls) folder. 
+You can see more MSDeploy configuration examples at [sitecore-on-azure/msdeployxmls](https://github.com/ivansharamok/Content/blob/master/articles/resources/scripts/sitecore-on-azure/configs/msdeployxmls) folder. 
 
 ## Automate packaging process
 
@@ -78,14 +78,14 @@ Start-SitecoreAzurePackaging -sitecorePath '.\Sitecore 8.2 rev. 161115_nodb.zip'
                              -skuConfigPath .\resources\8.2.1\configs\aM0.packaging.config.json
 ```
 >Note that example above uses `_nodb.zip` which has databases stripped out of Sitecore distributive as they are not necessary for AM deployment type.  
-Tha's why [common.app.packaging.config.json](https://github.com/ivansharamok/Content/resources/scripts/sitecore-on-azure/configs/common.app.packaging.config.json) config has `Sitecore.Cloud.Security.sccpl` reference removed comparing to default configuration in `common.packaging.config.json` file.
+Tha's why [common.app.packaging.config.json](https://github.com/ivansharamok/Content/blob/master/articles/resources/scripts/sitecore-on-azure/configs/common.app.packaging.config.json) config has `Sitecore.Cloud.Security.sccpl` reference removed comparing to default configuration in `common.packaging.config.json` file.
 
-You can use [packageSoA.ps1](https://github.com/ivansharamok/Content/resources/scripts/sitecore-on-azure/ps/packageSoA.ps1) script as an example. 
+You can use [packageSoA.ps1](https://github.com/ivansharamok/Content/blob/master/articles/resources/scripts/sitecore-on-azure/ps/packageSoA.ps1) script as an example. 
 
 ## Upload WDP into Azure Blob
 
 Once WDPs are ready, you need to make them available over HTTP for deployment MSDeploy process. I used [AzCopy](http://aka.ms/downloadazcopy) tool to upload them into my Azure Blob storage account.  
-You can use [uploadSoAWdp2AzBlob.ps1](https://github.com/ivansharamok/Content/resources/scripts/sitecore-on-azure/ps/uploadSoAWdp2AzBlob.ps1) example script to upload WDPs int your Azure Blob. 
+You can use [uploadSoAWdp2AzBlob.ps1](https://github.com/ivansharamok/Content/blob/master/articles/resources/scripts/sitecore-on-azure/ps/uploadSoAWdp2AzBlob.ps1) example script to upload WDPs int your Azure Blob. 
 The script creates `resourcelist.json` file with links to uploaded resources.
 
 ## Deploy Sitecore on Azure
