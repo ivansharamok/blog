@@ -5,12 +5,12 @@
 
 .Example
   .\uploadSoAWdp2AzBlob.ps1 -SourcePath .\xM1 
-        -StorageAccountName issccldstrg -ContainerName wdps 
+        -StorageAccountName <storageAccount> -ContainerName wdps 
         -DestStorageKey <storageAccountKey> 
         -Pattern '*.scwdp.zip'
 .Example
   .\uploadSoAWdp2AzBlob.ps1 -SourcePath .\xM1 
-        -StorageAccountName issccldstrg -ContainerName wdps 
+        -StorageAccountName <storageAccount> -ContainerName wdps 
         -DestStorageKey <storageAccountKey> -ExtendedParams '/L /V'
 #>
 [CmdletBinding()]
