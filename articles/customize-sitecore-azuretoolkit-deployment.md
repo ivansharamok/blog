@@ -18,7 +18,7 @@ This is to add to what's mentioned in [offical doc article](https://doc.sitecore
 
 SCCPL packages located at /cargopayloads folder in Sitecore Azure Toolkit (SAT) distributive. They hold configurations that can be applied to WDP during the packaging time. There are common SCCPL as well as role specific ones. 
 For example, `Sitecore.Cloud.Security.sccpl` contains SQL scripts that get executed to configure Sitecore databases (i.e. set up database users, configure Sitecore admin user password) during deployment. 
->At the time of writing this article I didn't find a way to assemble my own SCCPL. I requested product team to add such feature to SAT.
+>For more details on how to create custom SCCPL packages check out [Bas Lijten's blog post](http://blog.baslijten.com/sitecore-on-azure-create-custom-web-deploy-packages-using-the-sitecore-azure-toolkit/).
 
 ###  WDP mapping configuration files
 
