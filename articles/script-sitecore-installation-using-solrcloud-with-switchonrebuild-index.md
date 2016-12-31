@@ -129,7 +129,8 @@ Create setParameter.xml file where you specify MSDeploy parameters values:
 
 ## Deploy Sitecore using MSDeploy package and setParameter.xml file
 
->Command below assumes that `msdeploy` path is added to `Path` environment variable.
+>Command below assumes that `msdeploy` path is added to `Path` environment variable.  
+
 ```ps
 msdeploy -presync:runCommand="%SYSTEMROOT%\System32\inetsrv\appcmd add apppool /name:tst821 & %SYSTEMROOT%\System32\inetsrv\appcmd add site /name:tst821 /bindings:http://tst821.local:80 /physicalPath:C:\inetpub\wwwroot\tst821\Website & %SYSTEMROOT%\System32\inetsrv\appcmd set app tst821/ /applicationPool:tst821" -source:package="C:\wdps\Sitecore 8.2 rev. 161115_xp-solrcloud.scwdp.zip" -dest:auto,IncludeAcls='False' -verb:sync -disableLink:ContentExtension -disableLink:AppPoolExtension -disableLink:CertificateExtension -retryAttempts:2 -setParamFile:"customDeploy\solrcloud.msdeploy.setParameters.xml"
 ```
