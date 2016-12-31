@@ -11,29 +11,29 @@ and [MSDeploy package catered to on-prem installation](http://blog.baslijten.com
 Refer to [this article](http://blog.baslijten.com/sitecore-on-azure-create-custom-web-deploy-packages-using-the-sitecore-azure-toolkit/) for more details on how to create custom SCCPL configurations.
 * `Sitecore.OnPrem.Common.sccpl` configuration  
 This configuration adds `/App_Data` folder to website root directory and sets Sitecore's `dataFolder` setting to point to it.  
-![](./resources/media/script-sitecore-installatoin-using-solrcloud-with-switchonrebuild-index/Sitecore-onprem-common-folder-structure.png)  
+![](./resources/media/script-sitecore-installatoin-using-solrcloud-with-switchonrebuild-index/Sitecore-onprem-common-folder-structure.PNG?raw=true)  
 [Download](./resources/media/script-sitecore-installatoin-using-solrcloud-with-switchonrebuild-index/Sitecore.OnPrem.Common.zip) example configuration structure for this package.
 
 * `Solr.DataIndexes.Enabled.sccpl` configuration  
 This configuration contains instructions to disable config files for Lucene `sitecore_core_index`, `sitecore_master_index`, `sitecore_web_index` and enable necessary Solr configs for these indexes.  
-![](./resources/media/script-sitecore-installatoin-using-solrcloud-with-switchonrebuild-index/solr-dataindexes-enabled-config-structure.png)  
+![](./resources/media/script-sitecore-installatoin-using-solrcloud-with-switchonrebuild-index/solr-dataindexes-enabled-config-structure.PNG?raw=true)  
 [Download](./resources/media/script-sitecore-installatoin-using-solrcloud-with-switchonrebuild-index/Solr.DataIndexes.Enabled.zip) example configuration structure for this package.  
 
 * `Solr.DataIndexes.SwitchOnRebuild.Enabled.sccpl` configuration  
 This configuration sets Solr SwitchOnRebuild index for data indexes.  
-![](./resources/media/script-sitecore-installatoin-using-solrcloud-with-switchonrebuild-index/solr-dataindexes-switchonrebuild-enabled-config-structure.png)  
+![](./resources/media/script-sitecore-installatoin-using-solrcloud-with-switchonrebuild-index/solr-dataindexes-switchonrebuild-enabled-config-structure.PNG?raw=true)  
 [Download](./resources/media/script-sitecore-installatoin-using-solrcloud-with-switchonrebuild-index/Solr.DataIndexes.SwitchOnRebuild.Enabled.zip) example configuration structure for this package.  
 
 * `SolrCloud.DataIndexes.Reuse.ScItems.Collection.sccpl` configuration  
 This configuration contains patch config files to set reusable Solr collection `scitems` for all data indexes.  
-![](./resources/media/script-sitecore-installatoin-using-solrcloud-with-switchonrebuild-index/solrcloud-dataindexes-reuse-scitems-collection.png)  
+![](./resources/media/script-sitecore-installatoin-using-solrcloud-with-switchonrebuild-index/solrcloud-dataindexes-reuse-scitems-collection.PNG?raw=true)  
 [Download](./resources/media/script-sitecore-installatoin-using-solrcloud-with-switchonrebuild-index/SolrCloud.DataIndexes.Reuse.ScItems.Collection.zip) example configuration structure for this package.  
 >I use scripts to quickly standup SolrCloud instance with `scitems` and `scitems_swap` collections. That's why I created a separate SCCPL configuration with hard coded collection names.  
 Ideally you would set collection names via parameters for your MSDeploy package.  
 
 * `Sitecore.Security.SetAdminPassword.sccpl` configuration  
 This configuration includes SQL script to set custom `sitecore\admin` user password when you install MSDeploy package.  
-![](./resources/media/script-sitecore-installatoin-using-solrcloud-with-switchonrebuild-index/sitecore-security-setadminpassword.png)  
+![](./resources/media/script-sitecore-installatoin-using-solrcloud-with-switchonrebuild-index/sitecore-security-setadminpassword.PNG?raw=true)  
 [Download](./resources/media/script-sitecore-installatoin-using-solrcloud-with-switchonrebuild-index/Sitecore.Security.SetAdminPassword.zip) example configuration structure for this package.  
 >You can get `SetSitecoreAdminPassword.sql` file from `Sitecore.Cloud.Security.sccpl` package distributed with Sitecore Azure Toolkit.
 
