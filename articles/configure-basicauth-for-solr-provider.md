@@ -6,6 +6,9 @@
 
 Refer to official [Basic Authentication Plugin](https://cwiki.apache.org/confluence/display/solr/Basic+Authentication+Plugin) article to understand how it can be configured.  
 
+>Note  
+Prior to Solr 6.3.0 there is an issue with `blockUnknown` property described in [SOLR-9188](https://issues.apache.org/jira/browse/SOLR-9188).
+
 Steps below provide example configuration of basic authentication plugin for Solr 6.3.0.
 
 ### Create /security.json file
