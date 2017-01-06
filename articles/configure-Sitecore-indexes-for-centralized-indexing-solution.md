@@ -51,7 +51,27 @@ Likely, Sitecore provides several indexing strategies. One of those is `manual` 
 <manual type="Sitecore.ContentSearch.Maintenance.Strategies.ManualStrategy, Sitecore.ContentSearch" />
 ```
 In our example we can set `sitecore_master_index` to use `manual` strategy on CM2 instance. This will make CM1 the only instance that can push indexed data to Solr. 
+```xml
+        <index id="sitecore_master_index" type="Sitecore.ContentSearch.SolrProvider.SwitchOnRebuildSolrCloudSearchIndex, Sitecore.ContentSearch.SolrProvider">
+          .....
+          <strategies hint="list:AddStrategy">
+            <strategy ref="contentSearch/indexConfigurations/indexUpdateStrategies/manual" />
+          </strategies>
+          .....
+        </index>
+```
+
 For CD instances, we can set `sitecore_web_index` to use `manual` strategy on CD1, CD2 and CM2 as the same index is already defined on CM1 and uses the same Solr instance.
+```xml
+        <index id="sitecore_web_index" type="Sitecore.ContentSearch.SolrProvider.SwitchOnRebuildSolrCloudSearchIndex, Sitecore.ContentSearch.SolrProvider">
+          .....
+          <strategies hint="list:AddStrategy">
+            <strategy ref="contentSearch/indexConfigurations/indexUpdateStrategies/manual" />
+          </strategies>
+          .....
+        </index>
+```
+
 
 The downside of such configuration is that your CM environment has 2 instances with different configurations. It would require separate deployment process for CM1 and CM2. One solution could be to use a dedicated indexing instance.
 
