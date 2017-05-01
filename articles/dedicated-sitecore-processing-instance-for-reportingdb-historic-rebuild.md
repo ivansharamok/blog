@@ -9,7 +9,7 @@ First, you need to configure Sitecore instance as a [processing/aggregation role
 
 ## Configure connection string to hidden node
 Add a hidden node to your mongodb replica set.  
-For dev and testing purposes you can use this example to stand up mongodb replica set with a hidden node:
+For dev and testing purposes you can use this script to stand up mongodb replica set with a hidden node:  
 <script src="https://gist.github.com/ivansharamok/93c9bca5a0473e1bb8cef3e15a4efc9d.js"></script>
 Then add a connection string to `/App_Config/ConnectionStrings.config` pointing to the hidden node. Make sure you add `?slaveok=true` to the connection string to allow data provider to read from the hidden node.
 ```xml
