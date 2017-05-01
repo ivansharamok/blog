@@ -64,3 +64,5 @@ Keep in mind that above configuration steps would set you up with Sitecore proce
 ```
 
 When reporting database historic rebuild is required, you can start it from dedicated reporting historic rebuild instance and let your primary servers work on live data. When rebuild is finished, [reconfigure reporting connection strings](https://doc.sitecore.net/sitecore_experience_platform/setting_up_and_maintaining/xdb/server_considerations/walkthrough_rebuilding_the_reporting_database#_Reconfigure_reporting_connections) on all processing/aggregation instances`.
+> **Note**  
+Path Analyzer map rebuild process works with active reporting database. Therefore, you don't need to reconfigure reporting connection strings after you execute Path Analyzer map rebuild.
