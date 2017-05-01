@@ -23,14 +23,14 @@ Add another `collectionData` configuration to `aggregation` section and set it t
 ```xml
 <configuration xmlns:patch="http://www.sitecore.net/xmlconfig/" xmlns:set="http://www.sitecore.net/xmlconfig/set/">
   <sitecore>
-    <aggregation patch:source="Sitecore.Analytics.Processing.Aggregation.config">
+    <aggregation>
       <aggregationContexts>
         <interaction>
           <history>
             <Source set:ref="aggregation/collectionDataHidden" />
           </history>
         </interaction>
-        <pathAnalyzer patch:source="Sitecore.PathAnalyzer.Processing.config">
+        <pathAnalyzer>
           <history>
             <Source set:ref="aggregation/collectionDataHidden" />
           </history>
