@@ -1,4 +1,13 @@
-# remove all containers based on provided image ID or name
+<#
+.Synopsis
+    Remove all containers based on provided image ID or name.
+
+.Example
+  .\clean-docker-containers.ps1 -ImageId my-container
+
+.Example
+  .\clean-docker-containers.ps1 -ImageId my-container -RemoveImage
+#>
 [CmdletBinding()]
 param(
     [Parameter(Mandatory=$true)] $ImageId,
