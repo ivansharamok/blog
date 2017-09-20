@@ -99,9 +99,8 @@ RUN set -e; \
     IFS=${ORIG_IFS}; \
     exit 0
 
-# create xp index cores
 ENV XP_CORE_NAMES "${CORE_PREFIX}_xdb, ${CORE_PREFIX}_xdb_rebuild"
-# create xm index cores
+# create xp index cores
 RUN set -e; \
     ORIG_IFS=${IFS}; \
     IFS=', '; \
