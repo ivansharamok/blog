@@ -200,7 +200,7 @@ docker run -P -d solr create-config-cores.sh xp! sc81 /opt/res/configs/xdb/sc81c
 Command creates `xp` configuartion indexes only using Solr configuration from path `/opt/res/configs/xdb/sc81configs`.
 
 
-[solr+ssl article]: ./articles/run-solr+ssl-in-docker-container-with-sitecore-indexes.md
+[solr+ssl article]: ./run-solr+ssl-in-docker-container-with-sitecore-indexes.md
 [create-basic-cores script]: ./resources/media/flexible-solr-container-image-for-sitecore/res/scripts/create-basic-cores.sh
 [create-config-cores script]: ./resources/media/flexible-solr-container-image-for-sitecore/res/scripts/create-config-cores.sh
 [create-core script]: ./resources/media/flexible-solr-container-image-for-sitecore/res/scripts/create-core.sh
