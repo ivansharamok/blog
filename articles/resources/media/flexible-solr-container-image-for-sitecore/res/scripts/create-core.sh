@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# create solr cores for Sitecore 9.0
+# create solr cores for Sitecore
 # exit immediatly if exit command exists with non-zero status
 set -e
 # show script with all parameters passed => $@

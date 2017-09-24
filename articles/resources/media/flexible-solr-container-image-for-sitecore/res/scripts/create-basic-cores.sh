@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# create solr cores for Sitecore 9.0
+# create solr cores for Sitecore
 # exit immediatly if exit command exists with non-zero status
 # To create cores for xp configuration with "sitecore" prefix:
 #      docker run -P -d -p 8983:8983 solr create-basic-cores.sh
