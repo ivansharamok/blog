@@ -163,7 +163,10 @@ fi
 ```
 
 ## *Gotchas I ran into*
-One issue I ran into was the difference in permissions that get assigned to the files when you copy them from local Windows vs Mac OS into docker image. Files copied from Win OS get elevated permissions while files copied from Mac have to be assigned proper permissions to perform necessary actions on them (e.g. execute a shell script). To execute scipts you need `chmod +x` permission for the shell scripts. Here are instructions in the Dockerfile I had to apply to set the proper permission level:
+A few pitfalls I ran into while using Docker on Windows and Mac.
+
+### Set permissions explicitly in Dockerfile
+An issue I ran into was the difference in permissions that get assigned to the files when you copy them from local Windows vs Mac OS into docker image. Files copied from Win OS get elevated permissions while files copied from Mac have to be assigned proper permissions to perform necessary actions on them (e.g. execute a shell script). To execute scipts you need `chmod +x` or `chmod 700` permission assigned to shell scripts. Here are instructions in the Dockerfile I had to apply to set the proper permission level:
 ```Dockerfile
 # use root user to set permissions
 USER root
@@ -179,6 +182,15 @@ RUN chmod -R 700 /opt/res
 # set user back to $SOLR_USER
 USER $SOLR_USER
 ```
+
+### Ensure correct end of line sequence (LF vs CRLF)
+Since I used Linux based Docker images and run shell scripts in them, I have to make sure my scripts use LF end of line sequence. That's easy to miss when writing shell scripts on Windows. Any modern text editor can change that. To name a few `VS Code`, `Nodepad++`.
+One indication you forgot to set proper end of line sequence is this error when you create a container that executes a script:
+```
+Executing /opt/res/scripts/create-basic-cores.sh xm giddyup
+/opt/res/scripts/create-basic-cores.sh: /opt/res/scripts/create-core.sh: /bin/bash^M: bad interpreter: No such file or directory
+```
+
 ## Examples to create Solr containers with various Sitecore index configurations
 Here are a few examples how  you can create containers using input scripts.
 ### Create Sitecore indexes using all default input parameters
