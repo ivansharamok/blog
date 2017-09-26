@@ -8,6 +8,7 @@ Notes, thoughts and articles
 * [MSDeploy Sitecore installation using SolrCloud with SwitchOnRebuild index][5]
 * [Run Solr + SSL in Docker container with Sitecore indexes][6]
   * [Flexible Solr container image for Sitecore][7]
+* [Run your container in Azure][8]
 
 [1]: https://github.com/ivansharamok/Content/blob/master/articles/configure-basicauth-for-solr-provider.md
 [2]: https://github.com/ivansharamok/Content/blob/master/articles/configure-Sitecore-indexes-for-centralized-indexing-solution.md
@@ -16,3 +17,4 @@ Notes, thoughts and articles
 [5]: https://github.com/ivansharamok/Content/blob/master/articles/script-sitecore-installation-using-solrcloud-with-switchonrebuild-index.md
 [6]: ./articles/run-solr+ssl-in-docker-container-with-sitecore-indexes.md
 [7]: ./articles/flexible-solr-container-image-for-sitecore.md
+[8]: ./articles/run-your-container-in-azure.md
