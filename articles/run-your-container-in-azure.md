@@ -40,7 +40,7 @@ az container create -g mygroup -n mysolr --image myregistry.azurecr.io/solrssl-f
 ```
 >If you want to pass a command line to be executed at the time container instance is created you can that via ` --command-line 'my-script.sh'` parameter.
 
-Complete PowerShell script [deploy-aci-from-acr.ps1].
+>Complete PowerShell script [deploy-aci-from-acr.ps1].
 
 
 [solr+ssl]: ./run-solr+ssl-in-docker-container-with-sitecore-indexes.md
