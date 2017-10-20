@@ -4,7 +4,8 @@ In article [Solr + SSL in docker container][solr+ssl article] I showed how to bu
 >TL;TR
 Skip all the blabber and go straight to resources: 
 * [Dockerfile][dockerfile]
-* [create-basic-cores.sh][create-basic-cores script]
+* [create-basic-cores.sh Sitecore 8][create-basic-cores script Sitecore 8]
+* [create-basic-cores.sh Sitecore 9][create-basic-cores script Sitecore 9]
 * [create-config-cores.sh][create-config-cores script]
 * [create-core.sh][create-core script]
 
@@ -44,7 +45,8 @@ I created 2 shell scripts to provide options to create Solr cores. One allows me
 >Explore scipts to see their efault parameters.
 
 ### Create basic cores
-This script creates Solr cores according to specified configuration type based on `basic_configs` configset and provides options to set core prefixes, custom `schema` (e.g. `/res/configs/xm/my-schema.xml`) file and custom `solrconfig` (e.g. `/res/configs/my-solrconfig.xml`) file.
+This script creates Solr cores according to specified configuration type based on `basic_configs` configset and provides options to set core prefixes, custom `schema` (e.g. `/res/configs/xm/my-schema.xml` or `/res/configs/xm/my-managed-schema`) file and custom `solrconfig` (e.g. `/res/configs/my-solrconfig.xml`) file.
+#### Script for Sitecore 7.x and 8.x
 ```bash
 # set variables
 configpath='/opt/res/configs/xm'
@@ -90,7 +92,70 @@ if [[ 'xp' == $CONFIG_TYPE ]] || [[ 'xp!' == $CONFIG_TYPE ]]; then
 fi
 ```
 
-Get full code for [create-basic-cores.sh][create-basic-cores script] script.
+#### Script for Sitecore 9
+```bash
+configpath='/opt/res/configs/xm'
+coresdir="/opt/solr/server/solr/mycores"
+configsource='/opt/solr/server/solr/configsets/basic_configs'
+CONFIG_TYPE=${1:-'xp'}
+CORE_PREFIX=${2:-'sitecore'}
+# do not set default shema path as Sitecore 9.0 and up uses managed-schema file
+SCHEMA=${3}
+# data_driven_schema_configs has add-unknown-fields-to-the-schema processor enabled by default which is required for managed-schema
+SOLRCONFIG=${4:-'/opt/solr/server/solr/configsets/data_driven_schema_configs/conf/solrconfig.xml'}
+UNIQUEID=${5:-"_uniqueid"}
+FIELDIDTOREPLACE=${6:-"id"}
+
+if [[ -z $SOLR_HOME ]]; then
+    coresdir="/opt/solr/server/solr/mycores"
+    mkdir -p $coresdir
+else
+    coresdir=$SOLR_HOME
+fi
+
+if [[ 'xp!' != $CONFIG_TYPE ]]; then
+    # array of xm core names
+    declare -a cores=("${CORE_PREFIX}_core_index" "${CORE_PREFIX}_master_index" 
+                        "${CORE_PREFIX}_web_index" "${CORE_PREFIX}_marketingdefinitions_master"
+                        "${CORE_PREFIX}_marketingdefinitions_web" "${CORE_PREFIX}_marketing_asset_index_master"
+                        "${CORE_PREFIX}_marketing_asset_index_web" "${CORE_PREFIX}_testing_index"
+                        "${CORE_PREFIX}_suggested_test_index" "${CORE_PREFIX}_fxm_master_index"
+                        "${CORE_PREFIX}_fxm_web_index")
+    # create xm cores
+    uniquefield="<field name=\"$UNIQUEID\" type=\"string\" indexed=\"true\" stored=\"true\" required=\"true\" multiValued=\"false\" />"
+    for core in ${cores[@]}; do
+        /opt/res/scripts/create-core.sh "${core}"
+        if [[ ! -z $SCHEMA ]]; then
+            echo "copying $SCHEMA to ${coresdir}/${core}/conf/managed-schema"
+            cp $SCHEMA ${coresdir}/${core}/conf/managed-schema
+        else
+            # update schema file unique key
+            echo "changing <field name=\"$FIELDIDTOREPLACE\"... />"
+            sed -i -e "s|<field name=\"$FIELDIDTOREPLACE\".*$|$uniquefield|" ${coresdir}/${core}/conf/managed-schema
+            echo "changing <uniqueKey>$FIELDIDTOREPLACE</uniqueKey>"
+            sed -i -e "s|<uniqueKey>$FIELDIDTOREPLACE</uniqueKey>$|<uniqueKey>$UNIQUEID</uniqueKey>|" ${coresdir}/${core}/conf/managed-schema
+        fi
+        if [[ ! -z $SOLRCONFIG ]]; then
+            echo "copying $SOLRCONFIG to ${coresdir}/${core}/conf/solrconfig.xml"
+            cp $SOLRCONFIG ${coresdir}/${core}/conf/solrconfig.xml
+        fi
+
+    done
+fi
+
+# run this block only for xp || xp! configuration types
+if [[ 'xp' == $CONFIG_TYPE ]] || [[ 'xp!' == $CONFIG_TYPE ]]; then
+    # array of xdb core names
+    declare -a xcores=("${CORE_PREFIX}_xdb" "${CORE_PREFIX}_xdb_rebuild")
+
+    for xcore in ${xcores[@]}; do
+        /opt/res/scripts/create-core.sh "${xcore}"
+        cp /opt/res/configs/xdb/managed-schema ${coresdir}/${xcore}/conf/managed-schema
+    done
+fi
+```
+Get full code for [create-basic-cores.sh Sitecore 8][create-basic-cores script Sitecore 8] script.  
+Get full code for [create-basic-cores-sc9.sh Sitecore 9][create-basic-cores script Sitecore 9] script.
 
 ### Create cores based on predefined configufation
 Default configset `basic_configs` is a quick way to create a bare bone Solr core. However, a project may require custom Solr core configuraiton with custom stopwords or several languages or else. For this purpose I made another script that creates Solr cores using path that contains custom configuration.
@@ -213,7 +278,8 @@ Command creates `xp` configuartion indexes only using Solr configuration from pa
 
 
 [solr+ssl article]: ./run-solr+ssl-in-docker-container-with-sitecore-indexes.md
-[create-basic-cores script]: ./resources/media/flexible-solr-container-image-for-sitecore/res/scripts/create-basic-cores.sh
+[create-basic-cores script Sitecore 8]: ./resources/media/flexible-solr-container-image-for-sitecore/res/scripts/create-basic-cores.sh
+[create-basic-cores script Sitecore 9]: ./resources/media/flexible-solr-container-image-for-sitecore/res/scripts/create-basic-cores-sc9.sh
 [create-config-cores script]: ./resources/media/flexible-solr-container-image-for-sitecore/res/scripts/create-config-cores.sh
 [create-core script]: ./resources/media/flexible-solr-container-image-for-sitecore/res/scripts/create-core.sh
 [dockerfile]: ./resources/media/flexible-solr-container-image-for-sitecore/Dockerfile

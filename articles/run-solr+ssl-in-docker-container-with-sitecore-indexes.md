@@ -59,7 +59,7 @@ RUN sed -i -e "s|#SOLR_SSL_KEY_STORE=.*$|SOLR_SSL_KEY_STORE=$SOLR_SSL_PATH|" /op
 
 ### *Copy local resources into the docker image [OPTIONAL]*
 I build my Solr image with certain Solr configuration. For that I've configured my `solrconfig.xml` in a certain way and prepared my `schema.xml` file.
->For example, I want to force Solr instance to use `schema.xml` file by configuring `<schemaFactory class="ClassicIndexSchemaFactory" />` in `solrconfig.xml`)
+>For example, I may want to force Solr instance to use `schema.xml` file by configuring `<schemaFactory class="ClassicIndexSchemaFactory" />` in `solrconfig.xml`). This is necessary for Sitecore 7.x/8.x versions.
 
 ```Dockerfile
 COPY res /opt/res
