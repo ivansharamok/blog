@@ -21,6 +21,7 @@ Skip all the blabber and go straight to resources:
         * `managed-schema`
     * /scripts
       * `create-basic-cores.sh`
+      * `create-basic-cores-sc9.sh`
       * `create-config-cores.sh`
       * `create-core.sh`
 
@@ -156,6 +157,8 @@ fi
 ```
 Get full code for [create-basic-cores.sh Sitecore 8][create-basic-cores script Sitecore 8] script.  
 Get full code for [create-basic-cores-sc9.sh Sitecore 9][create-basic-cores script Sitecore 9] script.
+>Sitecore 9 requires managed-schema to be populated with fields before you can start indexing Sitecore items. You can do this by calling `/sitecore/admin/PopulateManagedSchema.aspx?indexes=all` service page.  
+As an alternative run [this script][populate managed schema script] after you spin up a new container with fresh Sitecore 9 indexes.
 
 ### Create cores based on predefined configufation
 Default configset `basic_configs` is a quick way to create a bare bone Solr core. However, a project may require custom Solr core configuraiton with custom stopwords or several languages or else. For this purpose I made another script that creates Solr cores using path that contains custom configuration.
@@ -283,3 +286,4 @@ Command creates `xp` configuartion indexes only using Solr configuration from pa
 [create-config-cores script]: ./resources/media/flexible-solr-container-image-for-sitecore/res/scripts/create-config-cores.sh
 [create-core script]: ./resources/media/flexible-solr-container-image-for-sitecore/res/scripts/create-core.sh
 [dockerfile]: ./resources/media/flexible-solr-container-image-for-sitecore/Dockerfile
+[populate managed schema script]: https://gist.github.com/ivansharamok/48ce60475d176511eeae16bf254e6dea
