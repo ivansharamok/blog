@@ -137,6 +137,11 @@ docker run --name my-solr-container -p 8983:8983 my-solr-image
 ```
 This command will create a docker container titled `my-solr-container` from image `my-solr-image` and will map host port 8983 to docker port 8983. Once container is up and running, I can open my browser and connect to my Solr instance at `https://localhost:8983/solr`.
 >Depending on browser you may need to add exception for SSL certificate when you navigate to Solr instance as your CA may not recognize it.
+
+## Pull SSL cert from docker and install into CA Root
+Once you get the container up and running, you need to pull cert generated for the container and install into CA Root of your machine to allow HTTPS requests.
+You can use [import-docker-solrssl-cert.ps1](https://gist.github.com/ivansharamok/552e51305849a9940eac2e5f0326bacf) script to do this.
+
 ## *Additional commands, notes, scripts*
 A few additional notes and commands on the subject that I used while working with docker containers.
 ### List all Docker containers
