@@ -114,6 +114,9 @@ Verify that service is up and running and has external IP:
 kubectl get services
 ```
 
+## Populate managed index schema
+Sitecore 9 requires managed-schema to be populated with fields before you can start indexing Sitecore items. You can do this by calling `/sitecore/admin/PopulateManagedSchema.aspx?indexes=all` service page.  
+
 ## _Install self-signed SSL cert into Win CA root [optional]_
 This step is necessary if you use [Solr image that creates self-signed SSL cert][solrssl-flex]. 
 Copy SSL cert from pod into your local machine:
