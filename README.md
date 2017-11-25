@@ -20,5 +20,5 @@ Notes, thoughts and articles
 [6]: ./articles/run-solr+ssl-in-docker-container-with-sitecore-indexes.md
 [7]: ./articles/flexible-solr-container-image-for-sitecore.md
 [8]: ./articles/run-your-container-in-azure.md
-[9]: ./run-solr-container-in-azure-kubernetes-cluster.md
-[10]: ./publishing-service-in-docker-container.md
+[9]: ./articles/run-solr-container-in-azure-kubernetes-cluster.md
+[10]: ./articles/publishing-service-in-docker-container.md
