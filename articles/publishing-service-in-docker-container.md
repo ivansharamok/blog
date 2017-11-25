@@ -38,7 +38,7 @@ In this mode you must insure that web site worker process starts as you run the 
 Service command logging is stored in `<serviceRoot>\logs` directory. Default service root is set to `c:\inetpub\wwwroot\sitecorepublishing` folder. Publishing logs are stored in differnt places depending on the mode you choose to run the service in.  
 When you execute the service as a console app, the logs are stored in current working dirctory. It's set to `/scripts` in the Dockerfile. However, when you run the service as IIS web site, publishing logs go into `<serviceRoot>\logs` directory alongside command logs.
 
-### Utility scripts
+## Utility scripts
 There are several scripts provided for this article.
 * `config-pubservice.ps1` - allows to configure connection strings for the publishing service and runs database upgrade command on them. You can overwrite default connection strings or configure connection strings for a different envioronment.
 * `get-status.ps1` - makes a web request to `http://localhost:5001/api/publishing/operations/status` service page. The output of the request is saved into the `c:\res\status.txt` file. In case of IIS web site, it starts up the publishing service web site.
