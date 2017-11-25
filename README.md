@@ -10,6 +10,7 @@ Notes, thoughts and articles
   * [Flexible Solr container image for Sitecore][7]
 * [Run your container in Azure][8]
 * [Run Solr container in Azure Kubernetes cluster (AKS)][9]
+* [Sitecore Publishing Service in docker container][10]
 
 [1]: https://github.com/ivansharamok/Content/blob/master/articles/configure-basicauth-for-solr-provider.md
 [2]: https://github.com/ivansharamok/Content/blob/master/articles/configure-Sitecore-indexes-for-centralized-indexing-solution.md
@@ -20,3 +21,4 @@ Notes, thoughts and articles
 [7]: ./articles/flexible-solr-container-image-for-sitecore.md
 [8]: ./articles/run-your-container-in-azure.md
 [9]: ./run-solr-container-in-azure-kubernetes-cluster.md
+[10]: ./publishing-service-in-docker-container.md
