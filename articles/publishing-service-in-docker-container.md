@@ -23,7 +23,7 @@ The scripts provided in this article assume the following folder configuration s
 ## Prepare Docker image
 Before building an image make sure you provide valid database connection strings in [Dockerfile][dockerfile]. Dowonload one of Sitecore Publishing Service versions and move service zip into the `/res` dirctory. Downloaded [scripts][scripts] and move them into the `/scripts` directory. Using the [Dockerfile][dockerfile] and [scripts][scripts] run `docker build .` command to create an image with installed Publishing Service in it. 
 
-### Two modes to run Publishin Service
+### Two modes to run Publishing Service
 The service can be started as a console app or as an IIS web site.
 
 #### Run it as console app
