@@ -16,6 +16,4 @@
     <link rel="stylesheet" type="text/css" href="{{ '/static/css/style.css' | prepend: site.baseurl | prepend: site.url}}" />
     {% for style in page.styles %}<link rel="stylesheet" type="text/css" href="{{ '/static/css/' | append: style | prepend: site.baseurl | prepend: site.url}}" />
     {%endfor%}
-    <!-- Hide resource from search bots for now -->
-    <meta name="robots" content="noindex,nofollow">
 </head>
