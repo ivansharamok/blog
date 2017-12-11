@@ -38,6 +38,7 @@ disqus_shortname: "blog-sharamok-com"
 
 
 resources: "/resources"
+github_blog_root: "https://github.com/ivansharamok/blog/tree/master/docs"
 # uncommet these variables when ready to publish the site
 url: "http://blog.sharamok.com"
 imgrepo: "http://blog.sharamok.com/static/img"

@@ -111,7 +111,7 @@ There seems to be an [issue](https://github.com/moby/moby/issues/32838) related 
 [winservercore]: https://hub.docker.com/r/microsoft/windowsservercore/
 [nanoserver]: https://hub.docker.com/r/microsoft/nanoserver/
 [dockerfile]: {{ "/resources/media/2017-11-24-publishing-service-in-docker-container/Dockerfile" | relative_url }}
-[scripts]: {{ "/resources/media/2017-11-24-publishing-service-in-docker-container/scripts" | relative_url }}
+[scripts]: {{ "/resources/media/2017-11-24-publishing-service-in-docker-container/scripts" | prepend: site.github_blog_root }}
 [windowshosting]: https://aka.ms/dotnetcore_windowshosting_1_1_0
 [start-service]: {{ "/resources/media/2017-11-24-publishing-service-in-docker-container/scripts/start-service.ps1" | relative_url }}
 [install-iiswebsite]: {{ "/resources/media/2017-11-24-publishing-service-in-docker-container/scripts/install-iiswebsite.ps1" | relative_url }}
