@@ -1,2 +1,2 @@
 # blog
-Blog
+public facing URL - http://blog.sharamok.com
