@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sitecore Publishing Service in Docker Windows Container</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="Sitecore Publishing Service in Docker Windows Container, publishing,containers, sitecore,publishing,docker, Works on my machine" />
+    <meta name="description" content="Sitecore Publishing Service in Docker Windows Container, publishing,containers, sitecore,publishing,docker, " />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2017-11-24/publishing-service-in-docker-container/" />
+    <link rel="alternate" type="application/rss+xml" title="Works on my machine" href="/feed.xml"  />
+
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" /> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+    <!-- Hide resource from search bots for now -->
+    <meta name="robots" content="noindex,nofollow">
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">Works on my machine</a>
+                    <p class="navbar-text">Notes, thoughts, experiments</p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/archive/" class="word-keep"><span class="octicon octicon-repo"></span>&nbsp;&nbsp;Archive</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <li><a href="#stq=" class="search-button"><span class="octicon octicon-search"></span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>Sitecore Publishing Service in Docker Windows Container</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Nov 24, 2017
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#publishing"><span class="octicon octicon-list-unordered"></span>&nbsp;publishing</a><a href="http://localhost:4000/category/#containers"><span class="octicon octicon-list-unordered"></span>&nbsp;containers</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#sitecore"><span class="octicon octicon-tag"></span>&nbsp;sitecore</a>
+                    
+                    <a class="word-keep" href="http://localhost:4000/tags/#publishing"><span class="octicon octicon-tag"></span>&nbsp;publishing</a>
+                    
+                    <a class="word-keep" href="http://localhost:4000/tags/#docker"><span class="octicon octicon-tag"></span>&nbsp;docker</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <ul id="markdown-toc">
+  <li><a href="#prepare-docker-image" id="markdown-toc-prepare-docker-image">Prepare Docker image</a>    <ul>
+      <li><a href="#two-modes-to-run-publishing-service" id="markdown-toc-two-modes-to-run-publishing-service">Two modes to run Publishing Service</a>        <ul>
+          <li><a href="#run-it-as-console-app" id="markdown-toc-run-it-as-console-app">Run it as console app</a></li>
+          <li><a href="#run-it-as-iis-web-site" id="markdown-toc-run-it-as-iis-web-site">Run it as IIS web site</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#service-logging" id="markdown-toc-service-logging">Service logging</a></li>
+  <li><a href="#utility-scripts" id="markdown-toc-utility-scripts">Utility scripts</a></li>
+  <li><a href="#examples-to-create-containers-passing-differnt-parameters" id="markdown-toc-examples-to-create-containers-passing-differnt-parameters">Examples to create containers passing differnt parameters</a>    <ul>
+      <li><a href="#run-container-using-default-configuration" id="markdown-toc-run-container-using-default-configuration">Run container using default configuration</a></li>
+      <li><a href="#run-container-and-configure-connection-strings" id="markdown-toc-run-container-and-configure-connection-strings">Run container and configure connection strings</a></li>
+      <li><a href="#run-service-as-iis-web-site" id="markdown-toc-run-service-as-iis-web-site">Run service as IIS web site</a></li>
+      <li><a href="#reconfigure-running-service" id="markdown-toc-reconfigure-running-service">Reconfigure running service</a></li>
+    </ul>
+  </li>
+  <li><a href="#gotchas" id="markdown-toc-gotchas">Gotchas</a>    <ul>
+      <li><a href="#copying-files-between-host-and-container" id="markdown-toc-copying-files-between-host-and-container">Copying files between host and container</a></li>
+      <li><a href="#localhost-mapping" id="markdown-toc-localhost-mapping">localhost mapping</a></li>
+      <li><a href="#installing-windows-hosting-sometimes-fails" id="markdown-toc-installing-windows-hosting-sometimes-fails">Installing windows hosting sometimes fails</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p>The article describes how I managed to put <a href="https://dev.sitecore.net/Downloads/Sitecore_Publishing_Service.aspx">Sitecore Publishing Service</a> into a Docker Windows container. Docker image <a href="https://hub.docker.com/r/microsoft/windowsservercore/">microsoft/windowsservercore</a> was used to create an image with the Publishing Service.</p>
+
+<blockquote>
+  <p>To run Sitecore Publishing Service in a Docker container make sure you switch Docker host to use Windows Containers.</p>
+</blockquote>
+
+<blockquote>
+  <p>Image <a href="https://hub.docker.com/r/microsoft/nanoserver/">microsoft/nanoserver</a> cannot be used as Publishing Service up to version 3.0 has a dependency on <code class="highlighter-rouge">Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.Data.dll</code> library which depends on full .NET Framework.</p>
+</blockquote>
+
+<blockquote>
+  <p>TL;TR
+Skip all the blabber and go straight to resources:</p>
+  <ul>
+    <li><a href="/resources/media/2017-11-24-publishing-service-in-docker-container/Dockerfile">Dockerfile</a></li>
+    <li><a href="/resources/media/2017-11-24-publishing-service-in-docker-container/scripts">scripts</a></li>
+  </ul>
+</blockquote>
+
+<p>The scripts provided in this article assume the following folder configuration structure for docker build directory:</p>
+<ul>
+  <li>/build_dir
+    <ul>
+      <li>Dockerfile</li>
+      <li>/res - contains <a href="https://dev.sitecore.net/Downloads/Sitecore_Publishing_Service.aspx">Publishing Service</a> zip and <a href="https://aka.ms/dotnetcore_windowshosting_1_1_0">dotnetcore windows hosting</a> exe.
+        <ul>
+          <li><code class="highlighter-rouge">Sitecore Publishing Service 2.1.0 rev. 171009.zip</code></li>
+        </ul>
+      </li>
+      <li>/scripts - contains necessary <a href="/resources/media/2017-11-24-publishing-service-in-docker-container/scripts">powershell scripts</a> to build the container image and work with Publishing Service.</li>
+    </ul>
+  </li>
+</ul>
+
+<blockquote>
+  <p>You may put <a href="https://aka.ms/dotnetcore_windowshosting_1_1_0">dotnetcore_windowshosting_1_1_0.exe</a> into <code class="highlighter-rouge">/res</code> directory to speed up image building process a bit.</p>
+</blockquote>
+
+<h2 id="prepare-docker-image">Prepare Docker image</h2>
+<p>Before building an image make sure you provide valid database connection strings in <a href="/resources/media/2017-11-24-publishing-service-in-docker-container/Dockerfile">Dockerfile</a>. Dowonload one of Sitecore Publishing Service versions and move service zip into the <code class="highlighter-rouge">/res</code> dirctory. Downloaded <a href="/resources/media/2017-11-24-publishing-service-in-docker-container/scripts">scripts</a> and move them into the <code class="highlighter-rouge">/scripts</code> directory. Using the <a href="/resources/media/2017-11-24-publishing-service-in-docker-container/Dockerfile">Dockerfile</a> and <a href="/resources/media/2017-11-24-publishing-service-in-docker-container/scripts">scripts</a> run <code class="highlighter-rouge">docker build .</code> command to create an image with installed Publishing Service in it.</p>
+
+<h3 id="two-modes-to-run-publishing-service">Two modes to run Publishing Service</h3>
+<p>The service can be started as a console app or as an IIS web site.</p>
+
+<h4 id="run-it-as-console-app">Run it as console app</h4>
+<p>When running the service as console app over Kestrel web server, there is no need to install <code class="highlighter-rouge">Web-Server</code> and <code class="highlighter-rouge">Web-Asp-Net45</code> features. The script <a href="/resources/media/2017-11-24-publishing-service-in-docker-container/scripts/start-service.ps1">start-service.ps1</a> starts the service with 5001 port by default. Inspect the script to understand what parameters it accepts.</p>
+<blockquote>
+  <p>Provided Dockerfile uses <code class="highlighter-rouge">start-service.ps1</code> script as default command to run the container instance.</p>
+</blockquote>
+
+<h4 id="run-it-as-iis-web-site">Run it as IIS web site</h4>
+<p>When running the service as IIS web site, the Windows features <code class="highlighter-rouge">Web-Server</code> and <code class="highlighter-rouge">Web-Asp-Net45</code> must be installed and the service must be configured in IIS. Use script <a href="/resources/media/2017-11-24-publishing-service-in-docker-container/scripts/install-iiswebsite.ps1">install-iiswebsite.ps1</a> to install the features and configure the service in IIS. Inspect the script to understand what parameters it accepts.<br />
+In this mode you must insure that web site worker process starts as you run the container. Otherwise, the container will shut down promptly after you start it. There is <a href="/resources/media/2017-11-24-publishing-service-in-docker-container/scripts/get-status.ps1">get-status.ps1</a> script that pings the publishing service web site. You can use this script to make sure the IIS web site is started after container is created.</p>
+
+<h2 id="service-logging">Service logging</h2>
+<p>Service command logging is stored in <code class="highlighter-rouge">&lt;serviceRoot&gt;\logs</code> directory. Default service root is set to <code class="highlighter-rouge">c:\inetpub\wwwroot\sitecorepublishing</code> folder. Publishing logs are stored in differnt places depending on the mode you choose to run the service in.<br />
+When you execute the service as a console app, the logs are stored in current working dirctory. It’s set to <code class="highlighter-rouge">/scripts</code> in the Dockerfile. However, when you run the service as IIS web site, publishing logs go into <code class="highlighter-rouge">&lt;serviceRoot&gt;\logs</code> directory alongside command logs.</p>
+
+<h2 id="utility-scripts">Utility scripts</h2>
+<p>There are several scripts provided for this article.</p>
+<ul>
+  <li><code class="highlighter-rouge">config-pubservice.ps1</code> - allows to configure connection strings for the publishing service and runs database upgrade command on them. You can overwrite default connection strings or configure connection strings for a different envioronment.</li>
+  <li><code class="highlighter-rouge">get-status.ps1</code> - makes a web request to <code class="highlighter-rouge">http://localhost:5001/api/publishing/operations/status</code> service page. The output of the request is saved into the <code class="highlighter-rouge">c:\res\status.txt</code> file. In case of IIS web site, it starts up the publishing service web site.</li>
+  <li><code class="highlighter-rouge">install-iiswebsite.ps1</code> - installs necessary resources and publishing service as IIS web site. The service is configured to be the default IIS web site running over port 5001.</li>
+  <li><code class="highlighter-rouge">set-custom-connbehaviours.ps1</code> - provides an example how to configure custom connection behaviors and reconfigure connections to use these connection behaviours.</li>
+  <li><code class="highlighter-rouge">set-custom-logging.ps1</code> - example how to set custom logging level for publishing service.</li>
+  <li><code class="highlighter-rouge">start-service.ps1</code> - starts service using Kestrel web server.</li>
+</ul>
+
+<h2 id="examples-to-create-containers-passing-differnt-parameters">Examples to create containers passing differnt parameters</h2>
+<p>Here are a few examples how  you can create containers using input scripts.</p>
+<h3 id="run-container-using-default-configuration">Run container using default configuration</h3>
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run --rm --name pubsvc pubservice21
+</code></pre></div></div>
+<p>Command creates a container named <code class="highlighter-rouge">pubsvc</code> from image <code class="highlighter-rouge">pubservice21</code> and starts publishing service as console app over port 5001. It starts it because Docker file has instruction <code class="highlighter-rouge">CMD ["powershell .\\start-service.ps1"]</code>.</p>
+<blockquote>
+  <p>Parameter <code class="highlighter-rouge">--rm</code> instructs docker host to remove container when it stops runnig.</p>
+</blockquote>
+
+<h3 id="run-container-and-configure-connection-strings">Run container and configure connection strings</h3>
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run --rm --name pubsvc pubservice21 powershell ".\\config-pubservice.ps1 -Core '&lt;coreConnectionString&gt;' -Master '&lt;masterConnectionString&gt;' -Web '&lt;webConnectionString&gt;'; .\\start-service.ps1"
+</code></pre></div></div>
+<p>Command creates a container and configures connection strings provided in the parameters. Then executes <code class="highlighter-rouge">start-service.ps1</code> script to get the service runing as a console app.</p>
+
+<h3 id="run-service-as-iis-web-site">Run service as IIS web site</h3>
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run --rm --name pubsvc pubservice21 powershell ".\\install-iiswebsite.ps1; .\\get-status.ps1"
+</code></pre></div></div>
+<p>Command creates container with publishing service configured as IIS web site. Then invokes <code class="highlighter-rouge">get-status.ps1</code> script to get web site running.</p>
+
+<h3 id="reconfigure-running-service">Reconfigure running service</h3>
+<p>You can execute scripts to re-configure the publishing service when you attach to already running container.</p>
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker exec -it pubsvc powershell
+</code></pre></div></div>
+<p>Command attaches to container <code class="highlighter-rouge">pubsvc</code> and opens <code class="highlighter-rouge">powershell</code> console. From here you can navigate around container file system and execute scripts to re-configure the service if needed.</p>
+
+<h2 id="gotchas">Gotchas</h2>
+<p>Some issues I ran into while building and testing the container.</p>
+
+<h3 id="copying-files-between-host-and-container">Copying files between host and container</h3>
+<p>Several times I was not able to copy files into and out of the container until I stopped the container.</p>
+
+<h3 id="localhost-mapping">localhost mapping</h3>
+<p>Windows containers use different approach to configure container network than Linux containers. One outcome of this is that <code class="highlighter-rouge">localhost</code> <a href="https://github.com/docker/for-win/issues/204">does not map to Windows container</a> by default. You can use either direct IP address of the container or utility <a href="https://github.com/Kymeric/DockerProxy">DockerProxy</a>.
+Get container IP address:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+docker inspect <span class="nt">--format</span><span class="o">=</span><span class="s1">'{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'</span> &lt;containerId&gt;
+
+</code></pre></div></div>
+
+<h3 id="installing-windows-hosting-sometimes-fails">Installing windows hosting sometimes fails</h3>
+<p>Several times I got error message while .net core windows hosting was getting installed.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hcsshim::ImportLayer failed in Win32: The system cannot find the path specified. (0x3) layerId=\\?\C:\ProgramData\Docker\windowsfilter
+</code></pre></div></div>
+<p>There seems to be an <a href="https://github.com/moby/moby/issues/32838">issue</a> related to the file system in Windows docker containers. Re-running image build command solved the problem.</p>
+
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share">
+              <!-- Go to www.addthis.com/dashboard to customize your tools -->
+              <div class="addthis_inline_share_toolbox"></div>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+        <div id="post-comment" class="sheet post">
+            <div id="disqus_thread"></div>
+        </div>
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#sitecore"><span class="octicon octicon-tag"></span>&nbsp;sitecore</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#publishing"><span class="octicon octicon-tag"></span>&nbsp;publishing</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#docker"><span class="octicon octicon-tag"></span>&nbsp;docker</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-07/run-solr-container-in-azure-kubernetes-cluster/">Run Solr container in Azure Kubernetes cluster (AKS)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-09-25/run-your-container-in-azure/">Run your container in Azure</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-09-24/flexible-solr-container-image-for-sitecore/">Flexible Solr container image for Sitecore</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-09-20/run-solr+ssl-in-docker-container-with-sitecore-indexes/">Run Solr + SSL in Docker container with Sitecore indexes</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-03-30/dedicated-sitecore-processing-instance-for-reportingdb-historic-rebuild/">Dedicated Sitecore processing instance for reporting database historic rebuild</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-01-05/configure-sitecore-indexes-for-centralized-indexing-solution/">Configure Sitecore indexes for centralized indexing solution</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-01-04/configure-basicauth-for-solr-provider/">Configure BasicAuthentication for Solr provider with Sitecore</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-12-30/script-sitecore-installation-using-solrcloud-with-switchonrebuild-index/">MSDeploy Sitecore installation using SolrCloud with SwitchOnRebuild index</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-12-10/customize-sitecore-azuretoolkit-deployment/">Customize Sitecore Azure toolkit deployment</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- Go to www.addthis.com/dashboard to customize your tools -->
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5a24c44d9a3c0d22"></script>
+    </div>
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ivansharamok" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <!-- <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a> -->
+                &nbsp;
+                <a href="http://blog.sharamok.com/"><span class="word-keep">&copy; Ivan Sharamok</span></a>
+        </div>
+        <div class="credit">
+            Credit to WakelessDragon for <a href="https://github.com/WakelessDragon/blog">Jekyll site theme</a>.
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

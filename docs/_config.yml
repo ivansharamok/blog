@@ -1,0 +1,48 @@
+permalink: /:year-:month-:day/:title/
+
+highlighter: rouge
+markdown: kramdown
+kramdown:
+  input:  GFM
+  syntax_highlighter: rouge
+
+
+paginate: 10
+paginate_path: ":num"
+baseurl: ""
+
+plugins:
+  - jekyll-paginate
+
+defaults:
+  -
+    scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: post
+      styles : [highlight.css,post.css]
+      scripts : [post.js]
+
+
+
+title: "Works on my machine"
+email: ""
+description: "Notes, thoughts, experiments"
+github_username:  "ivansharamok"
+
+## must change before enabling
+## swiftype costs 79/month basic plan. consider using Azure Search free tier instead.
+#swiftype_searchId: ""
+disqus_shortname: "blog-sharamok-com"
+
+
+resources: "/resources"
+# uncommet these variables when ready to publish the site
+url: "http://blog.sharamok.com"
+imgrepo: "http://blog.sharamok.com/static/img"
+
+# comment these variables out when publishing website
+#url: "http://127.0.0.1:4000"
+#imgrepo: "http://127.0.0.1:4000/static/img"
+

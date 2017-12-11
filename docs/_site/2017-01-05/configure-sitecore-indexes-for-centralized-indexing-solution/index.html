@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Configure Sitecore indexes for centralized indexing solution</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="Configure Sitecore indexes for centralized indexing solution, solr, sitecore,indexing, Works on my machine" />
+    <meta name="description" content="Configure Sitecore indexes for centralized indexing solution, solr, sitecore,indexing, " />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2017-01-05/configure-sitecore-indexes-for-centralized-indexing-solution/" />
+    <link rel="alternate" type="application/rss+xml" title="Works on my machine" href="/feed.xml"  />
+
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" /> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+    <!-- Hide resource from search bots for now -->
+    <meta name="robots" content="noindex,nofollow">
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">Works on my machine</a>
+                    <p class="navbar-text">Notes, thoughts, experiments</p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/archive/" class="word-keep"><span class="octicon octicon-repo"></span>&nbsp;&nbsp;Archive</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <li><a href="#stq=" class="search-button"><span class="octicon octicon-search"></span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>Configure Sitecore indexes for centralized indexing solution</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Jan 5, 2017
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#solr"><span class="octicon octicon-list-unordered"></span>&nbsp;solr</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#sitecore"><span class="octicon octicon-tag"></span>&nbsp;sitecore</a>
+                    
+                    <a class="word-keep" href="http://localhost:4000/tags/#indexing"><span class="octicon octicon-tag"></span>&nbsp;indexing</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <ul id="markdown-toc">
+  <li><a href="#how-index-relays-to-indexing-strategy" id="markdown-toc-how-index-relays-to-indexing-strategy">How index relays to indexing strategy</a></li>
+  <li><a href="#how-eventqueue-plays-a-role" id="markdown-toc-how-eventqueue-plays-a-role">How EventQueue plays a role</a></li>
+  <li><a href="#how-to-stop-sending-duplicate-data-to-indexing-solution" id="markdown-toc-how-to-stop-sending-duplicate-data-to-indexing-solution">How to stop sending duplicate data to indexing solution</a></li>
+  <li><a href="#dedicated-indexing-instance" id="markdown-toc-dedicated-indexing-instance">Dedicated indexing instance</a></li>
+</ul>
+
+<p>That’s a thought on how one should approach configuration of Sitecore indexes when using centralized indexing solution (e.g. Solr or Azure Search).
+I use Solr as primary example in this article.</p>
+
+<h2 id="how-index-relays-to-indexing-strategy">How index relays to indexing strategy</h2>
+
+<p>Each index in Sitecore configuration should have an indexing strategy (defined under <code class="highlighter-rouge">/contentSearch/indexConfigurations/indexUpdateStrategies</code> config section) to define when and how indexing operations happen.</p>
+
+<p>For example, default <code class="highlighter-rouge">sitecore_master_index</code> uses <code class="highlighter-rouge">syncMaster</code> strategy. It kicks off indexing as soon as any CRUD operation is applied to an item.</p>
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>        <span class="nt">&lt;index</span> <span class="na">id=</span><span class="s">"sitecore_master_index"</span> <span class="na">type=</span><span class="s">"Sitecore.ContentSearch.SolrProvider.SwitchOnRebuildSolrCloudSearchIndex, Sitecore.ContentSearch.SolrProvider"</span><span class="nt">&gt;</span>
+          .....
+          <span class="nt">&lt;strategies</span> <span class="na">hint=</span><span class="s">"list:AddStrategy"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;strategy</span> <span class="na">ref=</span><span class="s">"contentSearch/indexConfigurations/indexUpdateStrategies/syncMaster"</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;/strategies&gt;</span>
+          .....
+        <span class="nt">&lt;/index&gt;</span>
+</code></pre></div></div>
+<p>You can imagine that during high number of CRUD operations (e.g. custom job pulls data from external data source), this strategy may overwhelm application server as it will fight for resources to run indexing jobs. 
+A way to mitigate this effect is to use <code class="highlighter-rouge">intervalAsyncMaster</code> strategy. It runs per defined period rather than reacts to immediate CRUD operations.<br />
+For second example I’ll use <code class="highlighter-rouge">sitecore_web_index</code> that relies on <code class="highlighter-rouge">onPublishEndAsync</code> strategy. This strategy kicks off indexing operation when <code class="highlighter-rouge">PublishEnd</code> event occurs.</p>
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>        <span class="nt">&lt;index</span> <span class="na">id=</span><span class="s">"sitecore_web_index"</span> <span class="na">type=</span><span class="s">"Sitecore.ContentSearch.SolrProvider.SwitchOnRebuildSolrCloudSearchIndex, Sitecore.ContentSearch.SolrProvider"</span><span class="nt">&gt;</span>
+          .....
+          <span class="nt">&lt;strategies</span> <span class="na">hint=</span><span class="s">"list:AddStrategy"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;strategy</span> <span class="na">ref=</span><span class="s">"contentSearch/indexConfigurations/indexUpdateStrategies/onPublishEndAsync"</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;/strategies&gt;</span>
+          .....
+        <span class="nt">&lt;/index&gt;</span>
+</code></pre></div></div>
+
+<h2 id="how-eventqueue-plays-a-role">How EventQueue plays a role</h2>
+
+<p>Now lets imagine that we have distributed Content Management (CM) and Content Delivery (CD) environments. Let’s say there are CM1, CM2 instances and CD1, CD2 instances.<br />
+When content author modifies an item on CM1 instance (i.e. <code class="highlighter-rouge">sitecore_master_index</code> is involved), the item will get indexed according to indexing strategy (giving our example it’s <code class="highlighter-rouge">syncMaster</code> strategy). 
+The change will be pushed to the index that is managed by Solr. When the change happens, all other instances get notified via <code class="highlighter-rouge">EventQueue</code> (EQ). Each instance reads EQ entries and replays the events when applicable. 
+In this example, CM2 would read the item changed event(s) and replay it locally. This will trigger an indexing operaion on CM2 instance. Since the index is managed by Solr, the indexed data will be sent to Solr. 
+However, the same data were already submitted to Solr when the indexing operation happened on CM1 instance.<br />
+The same is true for <code class="highlighter-rouge">sitecore_web_index</code>. When a publishing operation occurs, the index updates will be sent to Solr from each Sitecore instance that has <code class="highlighter-rouge">sitecore_web_index</code> defined.<br />
+As a result Sitecore instances maybe sending the same indexed data multiple times to Solr instance.</p>
+
+<h2 id="how-to-stop-sending-duplicate-data-to-indexing-solution">How to stop sending duplicate data to indexing solution</h2>
+
+<p>We established that indexing strategy is responsible for triggering indexing operations. The strategy is defined in the configuration of the index. Therefore, one can change it when it’s needed. 
+Likely, Sitecore provides several indexing strategies. One of those is <code class="highlighter-rouge">manual</code> strategy. It does not trigger incremental index updates. It can run index update when the index rebuild is called explicitly (e.g. via UI tools).</p>
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- AUTOMATIC INDEXING DISABLED STRATEGY 
+     Every index that uses this strategy must be manually rebuilt. 
+--&gt;</span>
+<span class="nt">&lt;manual</span> <span class="na">type=</span><span class="s">"Sitecore.ContentSearch.Maintenance.Strategies.ManualStrategy, Sitecore.ContentSearch"</span> <span class="nt">/&gt;</span>
+</code></pre></div></div>
+<p>In our example we can set <code class="highlighter-rouge">sitecore_master_index</code> to use <code class="highlighter-rouge">manual</code> strategy on CM2 instance. This will make CM1 the only instance that can push indexed data to Solr.</p>
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>        <span class="nt">&lt;index</span> <span class="na">id=</span><span class="s">"sitecore_master_index"</span> <span class="na">type=</span><span class="s">"Sitecore.ContentSearch.SolrProvider.SwitchOnRebuildSolrCloudSearchIndex, Sitecore.ContentSearch.SolrProvider"</span><span class="nt">&gt;</span>
+          .....
+          <span class="nt">&lt;strategies</span> <span class="na">hint=</span><span class="s">"list:AddStrategy"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;strategy</span> <span class="na">ref=</span><span class="s">"contentSearch/indexConfigurations/indexUpdateStrategies/manual"</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;/strategies&gt;</span>
+          .....
+        <span class="nt">&lt;/index&gt;</span>
+</code></pre></div></div>
+
+<p>For CD instances, we can set <code class="highlighter-rouge">sitecore_web_index</code> to use <code class="highlighter-rouge">manual</code> strategy on CD1, CD2 and CM2 as the same index is already defined on CM1 and uses the same Solr instance.</p>
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>        <span class="nt">&lt;index</span> <span class="na">id=</span><span class="s">"sitecore_web_index"</span> <span class="na">type=</span><span class="s">"Sitecore.ContentSearch.SolrProvider.SwitchOnRebuildSolrCloudSearchIndex, Sitecore.ContentSearch.SolrProvider"</span><span class="nt">&gt;</span>
+          .....
+          <span class="nt">&lt;strategies</span> <span class="na">hint=</span><span class="s">"list:AddStrategy"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;strategy</span> <span class="na">ref=</span><span class="s">"contentSearch/indexConfigurations/indexUpdateStrategies/manual"</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;/strategies&gt;</span>
+          .....
+        <span class="nt">&lt;/index&gt;</span>
+</code></pre></div></div>
+
+<p>The downside of such configuration is that your CM environment has 2 instances with different configurations. It would require separate deployment process for CM1 and CM2. One solution could be to use a dedicated indexing instance.</p>
+
+<h2 id="dedicated-indexing-instance">Dedicated indexing instance</h2>
+
+<p>You can introduce an indexing role that would run all indexing operations for your Sitecore environments. It could be a single instance for all environments or there could be one indexing instance for each environment.
+The configuratoin of indexing instance is rather simple. You make sure that all necessary indexes are defined and configured in the indexing instance. 
+The same indexes should be set to use <code class="highlighter-rouge">manual</code> strategy for all other Sitecore instances (e.g. CM, CD).</p>
+
+<blockquote>
+  <p>It is a common practice to have a job instance that runs application custom jobs. This instance can be an ideal candidate to run all indexing jobs too. 
+Though, it all depends on how resource intence your custom jobs are and how often indexing operations happen.</p>
+</blockquote>
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share">
+              <!-- Go to www.addthis.com/dashboard to customize your tools -->
+              <div class="addthis_inline_share_toolbox"></div>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+        <div id="post-comment" class="sheet post">
+            <div id="disqus_thread"></div>
+        </div>
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#sitecore"><span class="octicon octicon-tag"></span>&nbsp;sitecore</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#indexing"><span class="octicon octicon-tag"></span>&nbsp;indexing</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-24/publishing-service-in-docker-container/">Sitecore Publishing Service in Docker Windows Container</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-07/run-solr-container-in-azure-kubernetes-cluster/">Run Solr container in Azure Kubernetes cluster (AKS)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-09-25/run-your-container-in-azure/">Run your container in Azure</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-09-24/flexible-solr-container-image-for-sitecore/">Flexible Solr container image for Sitecore</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-09-20/run-solr+ssl-in-docker-container-with-sitecore-indexes/">Run Solr + SSL in Docker container with Sitecore indexes</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-03-30/dedicated-sitecore-processing-instance-for-reportingdb-historic-rebuild/">Dedicated Sitecore processing instance for reporting database historic rebuild</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-01-04/configure-basicauth-for-solr-provider/">Configure BasicAuthentication for Solr provider with Sitecore</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-12-30/script-sitecore-installation-using-solrcloud-with-switchonrebuild-index/">MSDeploy Sitecore installation using SolrCloud with SwitchOnRebuild index</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-12-10/customize-sitecore-azuretoolkit-deployment/">Customize Sitecore Azure toolkit deployment</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- Go to www.addthis.com/dashboard to customize your tools -->
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5a24c44d9a3c0d22"></script>
+    </div>
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ivansharamok" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <!-- <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a> -->
+                &nbsp;
+                <a href="http://blog.sharamok.com/"><span class="word-keep">&copy; Ivan Sharamok</span></a>
+        </div>
+        <div class="credit">
+            Credit to WakelessDragon for <a href="https://github.com/WakelessDragon/blog">Jekyll site theme</a>.
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

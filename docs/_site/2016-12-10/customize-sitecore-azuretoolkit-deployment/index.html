@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Customize Sitecore Azure toolkit deployment</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="Customize Sitecore Azure toolkit deployment, azure, sitecore,deployment, Works on my machine" />
+    <meta name="description" content="Customize Sitecore Azure toolkit deployment, azure, sitecore,deployment, " />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2016-12-10/customize-sitecore-azuretoolkit-deployment/" />
+    <link rel="alternate" type="application/rss+xml" title="Works on my machine" href="/feed.xml"  />
+
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" /> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+    <!-- Hide resource from search bots for now -->
+    <meta name="robots" content="noindex,nofollow">
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">Works on my machine</a>
+                    <p class="navbar-text">Notes, thoughts, experiments</p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/archive/" class="word-keep"><span class="octicon octicon-repo"></span>&nbsp;&nbsp;Archive</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <li><a href="#stq=" class="search-button"><span class="octicon octicon-search"></span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>Customize Sitecore Azure toolkit deployment</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Dec 10, 2016
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#azure"><span class="octicon octicon-list-unordered"></span>&nbsp;azure</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#sitecore"><span class="octicon octicon-tag"></span>&nbsp;sitecore</a>
+                    
+                    <a class="word-keep" href="http://localhost:4000/tags/#deployment"><span class="octicon octicon-tag"></span>&nbsp;deployment</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <ul id="markdown-toc">
+  <li><a href="#expanded-view-of-sat-resources" id="markdown-toc-expanded-view-of-sat-resources">Expanded view of SAT resources</a>    <ul>
+      <li><a href="#cargo-payloads-sccpl-packages" id="markdown-toc-cargo-payloads-sccpl-packages">Cargo payloads (SCCPL) packages</a></li>
+      <li><a href="#wdp-mapping-configuration-files" id="markdown-toc-wdp-mapping-configuration-files">WDP mapping configuration files</a></li>
+      <li><a href="#msdeploy-configs" id="markdown-toc-msdeploy-configs">MSDeploy configs</a></li>
+    </ul>
+  </li>
+  <li><a href="#automate-packaging-process" id="markdown-toc-automate-packaging-process">Automate packaging process</a></li>
+  <li><a href="#upload-wdp-into-azure-blob" id="markdown-toc-upload-wdp-into-azure-blob">Upload WDP into Azure Blob</a></li>
+  <li><a href="#deploy-sitecore-on-azure" id="markdown-toc-deploy-sitecore-on-azure">Deploy Sitecore on Azure</a></li>
+</ul>
+
+<p>Get familiar with <a href="https://doc.sitecore.net/cloud/working_with_sitecore_azure_toolkit/packaging/packaging_a_sitecore_solution_for_the_microsoft_azure_app_service">packaging approach for Sitecore on Azure</a> (SoA) to understand the basics of packaging SoA solution.
+Also check out <a href="https://doc.sitecore.net/cloud/working_with_sitecore_azure_toolkit/overview/getting_started_with_sitecore_azure_toolkit">Getting started with Sitecore Azure Toolkit</a> to understand configuration peices of packaing process.</p>
+<blockquote>
+  <p><a href="https://dev.sitecore.net/Downloads/Sitecore_Azure_Toolkit/1x/Sitecore_Azure_Toolkit_100.aspx">Sitecore Azure Toolkit</a> may also be referred to as Sitecore Azure SDK or Provisioning SDK.</p>
+</blockquote>
+
+<p>This article explains what you need to do to create a custom configuration of SoA Web Deployment Package (WDP). Described configuration below is catered to example ARM templates 
+<a href="https://github.com/ivansharamok/Sitecore-Azure-Quickstart-Templates/tree/master/Sitecore%208.2.1/am0">AM0</a>, 
+<a href="https://github.com/ivansharamok/Sitecore-Azure-Quickstart-Templates/tree/master/Sitecore%208.2.1/am">AM</a>, 
+<a href="https://github.com/ivansharamok/Sitecore-Azure-Quickstart-Templates/tree/master/Sitecore%208.2.1/ams">AMS</a>.<br />
+Unlike <a href="https://github.com/ivansharamok/Sitecore-Azure-Quickstart-Templates/tree/master/Sitecore%208.2.1/xm">XM</a> deployment type, AM type is created to deploy Sitecore app and connect it to already existing resources.</p>
+
+<h2 id="expanded-view-of-sat-resources">Expanded view of SAT resources</h2>
+
+<p>This is to add to what’s mentioned in <a href="https://doc.sitecore.net/cloud/working_with_sitecore_azure_toolkit/overview/getting_started_with_sitecore_azure_toolkit">offical doc article</a> and SAT README file.</p>
+
+<h3 id="cargo-payloads-sccpl-packages">Cargo payloads (SCCPL) packages</h3>
+
+<p>SCCPL packages located at /cargopayloads folder in Sitecore Azure Toolkit (SAT) distributive. They hold configurations that can be applied to WDP during the packaging time. There are common SCCPL as well as role specific ones. 
+For example, <code class="highlighter-rouge">Sitecore.Cloud.Security.sccpl</code> contains SQL scripts that get executed to configure Sitecore databases (i.e. set up database users, configure Sitecore admin user password) during deployment.</p>
+<blockquote>
+  <p>For more details on how to create custom SCCPL packages check out <a href="http://blog.baslijten.com/sitecore-on-azure-create-custom-web-deploy-packages-using-the-sitecore-azure-toolkit/">Bas Lijten’s blog post</a>.</p>
+</blockquote>
+
+<h3 id="wdp-mapping-configuration-files">WDP mapping configuration files</h3>
+
+<p>You can find config mapping files in the /configs folder of SAT. These types of configs describe resources that WDP will include after packaging. Configs use <code class="highlighter-rouge">JSON</code> format. 
+There are two types of configs: <code class="highlighter-rouge">common</code> and <code class="highlighter-rouge">role specific</code>.<br />
+<code class="highlighter-rouge">Common</code> config lists SCCPL packages that will be applied to each WDP. Here is an example of <code class="highlighter-rouge">common</code> config for AM type ARM templates:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+    "sccpls":["Sitecore.Cloud.Common.sccpl", "Sitecore.Cloud.Search.sccpl", "Sitecore.Cloud.ApplicationInsights.sccpl", "Sitecore.Cloud.Thundercracker.sccpl"]
+}
+</code></pre></div></div>
+<p>Where as the other type describes <code class="highlighter-rouge">role specific</code> configurations. Here is example of <code class="highlighter-rouge">role specifc</code> config for AM type ARM templates:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+    "scwdps":[
+        {
+            "role" : "appcd",
+            "archiveXml" : "aM.App.archive.xml",
+            "parametersXml": "aM.CD.parameters.xml",
+            "sccpls" : ["Sitecore.Cloud.RoleSpecific_CD.sccpl", "Sitecore.Cloud.Redis_CD.sccpl", "Sitecore.Cloud.DisableAnalytics.sccpl", "Sitecore.Cloud.Thundercracker_CD.sccpl", "Sitecore.Cloud.Security_CD.sccpl"]
+        },
+        {
+            "role" : "appcm",
+            "archiveXml" : "aM.App.archive.xml",
+            "parametersXml": "aM.CM.parameters.xml",
+            "sccpls" : ["Sitecore.Cloud.RoleSpecific_CM.sccpl", "Sitecore.Cloud.DisableAnalytics.sccpl", "Sitecore.Cloud.HttpsRedirection.sccpl", "Sitecore.Cloud.IPSecurity.sccpl"]
+        }
+    ]
+}
+</code></pre></div></div>
+<p>Example:</p>
+<ul>
+  <li>The <a href="/resources/media/2016-12-10-customize-sitecore-azuretoolkit-deployment/configs/common.app.packaging.config.json">common.app.packaging.config.json</a> file represents common configuration for deployment type that does not create and configure Sitecore databases.</li>
+  <li>The <a href="/resources/media/2016-12-10-customize-sitecore-azuretoolkit-deployment/configs/am.packaging.config.json">am.packaging.config.json</a> file represents configuration for AM type deployment.</li>
+</ul>
+
+<p>You can see more examples at <a href="https://github.com/ivansharamok/Sitecore-Azure-Quickstart-Templates/tree/master/Sitecore%208.2.1">sitecore-on-azure/configs</a> folder.</p>
+
+<h3 id="msdeploy-configs">MSDeploy configs</h3>
+
+<p>These <code class="highlighter-rouge">XML</code> files represent <code class="highlighter-rouge">MSDeploy manifest</code> (archive.xml) and <code class="highlighter-rouge">MSDeploy parameters</code> (parameters.xml) configurations. The <code class="highlighter-rouge">archive.xml</code> contains descriptions of SQL databases, SQL scripts and IIS application. Whereas <code class="highlighter-rouge">parameters.xml</code> has list of parameters that can be used to configure your application during the deployment process. For instance, set database connection strings or use <code class="highlighter-rouge">sitecore admin password</code> variable to set sitecore admin user password etc.</p>
+
+<p>Example:</p>
+<ul>
+  <li>The <a href="/resources/media/2016-12-10-customize-sitecore-azuretoolkit-deployment/msdeployxmls/aM.App.archive.xml">aM.App.archive.xml</a> file describes MSDeploy manifest for AM type deployment.</li>
+  <li>The <a href="/resources/media/2016-12-10-customize-sitecore-azuretoolkit-deployment/msdeployxmls/aM.CM.parameters.xml">aM.CM.parameters.xml</a> file describes MSDeploy parameters for <code class="highlighter-rouge">CM</code> role of AM type deployment.</li>
+  <li>The <a href="/resources/media/2016-12-10-customize-sitecore-azuretoolkit-deployment/msdeployxmls/aM.CD.parameters.xml">aM.CD.parameters.xml</a> file describes MSDeploy parameters for <code class="highlighter-rouge">CD</code> role of AM type deployment.</li>
+</ul>
+
+<p>You can see more MSDeploy configuration examples at <a href="https://github.com/ivansharamok/Sitecore-Azure-Quickstart-Templates/tree/master/Sitecore%208.2.1">sitecore-on-azure/msdeployxmls</a> folder.</p>
+
+<h2 id="automate-packaging-process">Automate packaging process</h2>
+
+<p>Here is example PS code that can be used to assemble SoA WDP for AM deployment:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Start-SitecoreAzurePackaging -sitecorePath '.\Sitecore 8.2 rev. 161115_nodb.zip' `
+                             -destinationFolderPath .\aM `
+                             -cargoPayloadFolderPath .\resources\8.2.1\cargopayloads `
+                             -archiveAndParameterXmlPath .\resources\8.2.1\msdeployxmls `
+                             -commonConfigPath .\resources\8.2.1\configs\common.app.packaging.config.json `
+                             -skuConfigPath .\resources\8.2.1\configs\aM0.packaging.config.json
+</code></pre></div></div>
+<blockquote>
+  <p>Note that example above uses <code class="highlighter-rouge">_nodb.zip</code> which has databases stripped out of Sitecore distributive as they are not necessary for AM deployment type.<br />
+Tha’s why <a href="/resources/media/2016-12-10-customize-sitecore-azuretoolkit-deployment/configs/common.app.packaging.config.json">common.app.packaging.config.json</a> config has <code class="highlighter-rouge">Sitecore.Cloud.Security.sccpl</code> reference removed comparing to default configuration in <code class="highlighter-rouge">common.packaging.config.json</code> file.</p>
+</blockquote>
+
+<p>You can use <a href="/resources/media/2016-12-10-customize-sitecore-azuretoolkit-deployment/ps/packageSoA.ps1">packageSoA.ps1</a> script as an example.</p>
+
+<h2 id="upload-wdp-into-azure-blob">Upload WDP into Azure Blob</h2>
+
+<p>Once WDPs are ready, you need to make them available over HTTP for deployment MSDeploy process. I used <a href="http://aka.ms/downloadazcopy">AzCopy</a> tool to upload them into my Azure Blob storage account.<br />
+You can use <a href="/resources/media/2016-12-10-customize-sitecore-azuretoolkit-deployment/ps/uploadSoAWdp2AzBlob.ps1">uploadSoAWdp2AzBlob.ps1</a> example script to upload WDPs int your Azure Blob. 
+The script creates <code class="highlighter-rouge">resourcelist.json</code> file with links to uploaded resources.</p>
+
+<h2 id="deploy-sitecore-on-azure">Deploy Sitecore on Azure</h2>
+
+<p>To deploy SoA using desired ARM templates, follow instctions described at <a href="https://github.com/Sitecore/Sitecore-Azure-Quickstart-Templates">Sitecore Azure Quickstart Templates</a> project.</p>
+
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share">
+              <!-- Go to www.addthis.com/dashboard to customize your tools -->
+              <div class="addthis_inline_share_toolbox"></div>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+        <div id="post-comment" class="sheet post">
+            <div id="disqus_thread"></div>
+        </div>
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#sitecore"><span class="octicon octicon-tag"></span>&nbsp;sitecore</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#deployment"><span class="octicon octicon-tag"></span>&nbsp;deployment</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-24/publishing-service-in-docker-container/">Sitecore Publishing Service in Docker Windows Container</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-07/run-solr-container-in-azure-kubernetes-cluster/">Run Solr container in Azure Kubernetes cluster (AKS)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-09-25/run-your-container-in-azure/">Run your container in Azure</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-03-30/dedicated-sitecore-processing-instance-for-reportingdb-historic-rebuild/">Dedicated Sitecore processing instance for reporting database historic rebuild</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-01-05/configure-sitecore-indexes-for-centralized-indexing-solution/">Configure Sitecore indexes for centralized indexing solution</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-01-04/configure-basicauth-for-solr-provider/">Configure BasicAuthentication for Solr provider with Sitecore</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-12-30/script-sitecore-installation-using-solrcloud-with-switchonrebuild-index/">MSDeploy Sitecore installation using SolrCloud with SwitchOnRebuild index</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- Go to www.addthis.com/dashboard to customize your tools -->
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5a24c44d9a3c0d22"></script>
+    </div>
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ivansharamok" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <!-- <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a> -->
+                &nbsp;
+                <a href="http://blog.sharamok.com/"><span class="word-keep">&copy; Ivan Sharamok</span></a>
+        </div>
+        <div class="credit">
+            Credit to WakelessDragon for <a href="https://github.com/WakelessDragon/blog">Jekyll site theme</a>.
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

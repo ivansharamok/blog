@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Run Solr + SSL in Docker container with Sitecore indexes</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="Run Solr + SSL in Docker container with Sitecore indexes, solr,containers, indexing,docker, Works on my machine" />
+    <meta name="description" content="Run Solr + SSL in Docker container with Sitecore indexes, solr,containers, indexing,docker, " />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2017-09-20/run-solr+ssl-in-docker-container-with-sitecore-indexes/" />
+    <link rel="alternate" type="application/rss+xml" title="Works on my machine" href="/feed.xml"  />
+
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" /> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+    <!-- Hide resource from search bots for now -->
+    <meta name="robots" content="noindex,nofollow">
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">Works on my machine</a>
+                    <p class="navbar-text">Notes, thoughts, experiments</p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/archive/" class="word-keep"><span class="octicon octicon-repo"></span>&nbsp;&nbsp;Archive</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <li><a href="#stq=" class="search-button"><span class="octicon octicon-search"></span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>Run Solr + SSL in Docker container with Sitecore indexes</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Sep 20, 2017
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#solr"><span class="octicon octicon-list-unordered"></span>&nbsp;solr</a><a href="http://localhost:4000/category/#containers"><span class="octicon octicon-list-unordered"></span>&nbsp;containers</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#indexing"><span class="octicon octicon-tag"></span>&nbsp;indexing</a>
+                    
+                    <a class="word-keep" href="http://localhost:4000/tags/#docker"><span class="octicon octicon-tag"></span>&nbsp;docker</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <ul id="markdown-toc">
+  <li><a href="#create-docker-image" id="markdown-toc-create-docker-image">Create Docker image</a>    <ul>
+      <li><a href="#docker-image-preparation-considerations" id="markdown-toc-docker-image-preparation-considerations">Docker image preparation considerations</a></li>
+      <li><a href="#create-basic-dockerfile" id="markdown-toc-create-basic-dockerfile">Create basic Dockerfile</a></li>
+      <li><a href="#generate-ssl-cert" id="markdown-toc-generate-ssl-cert">Generate SSL cert</a></li>
+      <li><a href="#set-solr-ssl-parameters" id="markdown-toc-set-solr-ssl-parameters">Set Solr SSL parameters</a></li>
+      <li><a href="#copy-local-resources-into-the-docker-image-optional" id="markdown-toc-copy-local-resources-into-the-docker-image-optional"><em>Copy local resources into the docker image [OPTIONAL]</em></a></li>
+      <li><a href="#pre-create-solr-cores" id="markdown-toc-pre-create-solr-cores">Pre-create Solr cores</a></li>
+      <li><a href="#build-docker-image" id="markdown-toc-build-docker-image">Build docker image</a></li>
+    </ul>
+  </li>
+  <li><a href="#run-docker-container-from-my-image" id="markdown-toc-run-docker-container-from-my-image">Run docker container from my image</a></li>
+  <li><a href="#pull-ssl-cert-from-docker-and-install-into-ca-root" id="markdown-toc-pull-ssl-cert-from-docker-and-install-into-ca-root">Pull SSL cert from docker and install into CA Root</a></li>
+  <li><a href="#additional-commands-notes-scripts" id="markdown-toc-additional-commands-notes-scripts"><em>Additional commands, notes, scripts</em></a>    <ul>
+      <li><a href="#list-all-docker-containers" id="markdown-toc-list-all-docker-containers">List all Docker containers</a></li>
+      <li><a href="#remove-all-containers-based-on-certain-image" id="markdown-toc-remove-all-containers-based-on-certain-image">Remove all containers based on certain image</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p>The idea here is to run Solr component configured with SSL in its own Docker container that could be used in local development environment.</p>
+
+<blockquote>
+  <p>TL;TR<br />
+Don’t want to go thru step by step exerciese, then here is <a href="/resources/media/2017-09-20-run-solr+ssl-in-docker-container-with-sitecore-indexes/Dockerfile">complete Dockerfile</a> for this article.</p>
+</blockquote>
+
+<h2 id="create-docker-image">Create Docker image</h2>
+<p>The fastest way to create a Solr docker image is to build it from <a href="https://hub.docker.com/_/solr/">already available Solr images</a>. In this example I use image <a href="https://github.com/docker-solr/docker-solr/tree/c61a0c9b012c7313c2b5d0d97ddc06693270b734/6.6/alpine">solr:6.6-alpine</a>.</p>
+
+<blockquote>
+  <p>I use Linix based containers for this exercise. Do appropriate switching of Docker engine if you run Docker on Windows.</p>
+</blockquote>
+
+<h3 id="docker-image-preparation-considerations">Docker image preparation considerations</h3>
+<p>Building my own version from an existing image makes sense when I want to change something in the original image or perpahs provide a differnt command or script for an <code class="highlighter-rouge">ENTRYPOINT</code> or <code class="highlighter-rouge">CMD</code>. In this exercise I want to configure Solr with SSL using the image that does not do that. If you just starting with docker images, you may find it tempting to put desired container configuration into shell scripts and then run them via <code class="highlighter-rouge">ENTRYPOINT</code> or <code class="highlighter-rouge">CMD</code> or combination of both. While that’s possible to do, I believe it’s contrary to what containers usually used for. In dev environment containers typically run as stateless components that can be destroyed at any time and re-created with exact same configuration state.<br />
+Having said that there could be situations when you may need to have a statefull container which could be stopped and started many times. In those cases you do need to be carefull what logic you put into <code class="highlighter-rouge">ENTRYPOINT</code> and <code class="highlighter-rouge">CMD</code> commands as that logic will run <strong>every time</strong> when you create or start a container.</p>
+
+<h3 id="create-basic-dockerfile">Create basic Dockerfile</h3>
+<p>Create a <code class="highlighter-rouge">Dockerfile</code> in a folder with the following content to make a Solr docker image based on lighweight <a href="https://hub.docker.com/_/alpine/">docker alpine linux version</a>.</p>
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> solr:6.6-alpine</span>
+
+<span class="k">ENTRYPOINT</span><span class="s"> ["docker-entrypoint.sh"]</span>
+<span class="k">CMD</span><span class="s"> ["solr-foreground"]</span>
+</code></pre></div></div>
+<blockquote>
+  <p>Scripts <code class="highlighter-rouge">docker-entrypoint.sh</code> and <code class="highlighter-rouge">solr-foreground</code> come from original <a href="https://github.com/docker-solr/docker-solr/tree/8a8e9311fbe5d40861f6d26293441c272a7878f8/6.6">solr:6.6-alpine</a> image. For more info on docker <code class="highlighter-rouge">ENTRYPOINT</code> and <code class="highlighter-rouge">CMD</code> refer to <a href="https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact">official docker docs</a>.</p>
+</blockquote>
+
+<p>Building this <code class="highlighter-rouge">Dockerfile</code> will pull <code class="highlighter-rouge">solr:6.6-alpine</code> image and build it into your local docker repository. So far this configuration doesn’t provide any benefits to me as I just build my local image from already available container. In this case creating a Solr container from my local image would be similar to simply running a docker command:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--name</span> &lt;myContainerName&gt; <span class="nt">-p</span> 8983:8983 solr:6.6-alpine
+</code></pre></div></div>
+<h3 id="generate-ssl-cert">Generate SSL cert</h3>
+<p>To generate SSL certificate I use <a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/keytool.html">keytool</a> that is supplied with Java platform.</p>
+
+<blockquote>
+  <p>The code below as well as following bits of code will go into the <code class="highlighter-rouge">Dockerfile</code> between lines <code class="highlighter-rouge">FROM</code> and <code class="highlighter-rouge">ENTRYPOINT</code>.</p>
+</blockquote>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ENV</span><span class="s"> SOLR_SSL_PATH /opt/solr/server/etc/solr-ssl.keystore.jks</span>
+<span class="k">ENV</span><span class="s"> SOLR_SSL_PWD secret</span>
+<span class="c"># create SSL certificate</span>
+<span class="k">RUN </span><span class="nb">set</span> <span class="nt">-e</span><span class="p">;</span> <span class="se">\
+</span>    <span class="nv">$JAVA_HOME</span>/bin/keytool <span class="nt">-genkeypair</span> <span class="nt">-alias</span> solr-ssl <span class="nt">-keyalg</span> RSA <span class="nt">-keysize</span> 2048 <span class="nt">-keypass</span> <span class="nv">$SOLR_SSL_PWD</span> <span class="nt">-storepass</span> <span class="nv">$SOLR_SSL_PWD</span> <span class="se">\
+</span>    <span class="nt">-validity</span> 9999 <span class="nt">-keystore</span> <span class="nv">$SOLR_SSL_PATH</span> <span class="nt">-ext</span> <span class="nv">SAN</span><span class="o">=</span>DNS:localhost,IP:127.0.0.1 <span class="se">\
+</span>    <span class="nt">-dname</span> <span class="s2">"CN=localhost, OU=Organizational Unit, O=Organization, L=Location, ST=State, C=Country"</span><span class="p">;</span> <span class="se">\
+</span>    <span class="nb">exit </span>0
+</code></pre></div></div>
+<h3 id="set-solr-ssl-parameters">Set Solr SSL parameters</h3>
+<p>Next step is to configure Solr SSL parameters with the certificate keystore. For that I need to configure SSL parameters in <code class="highlighter-rouge">/solr.in.sh</code> file.</p>
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># set Solr SSL parameters</span>
+<span class="k">RUN </span>sed <span class="nt">-i</span> <span class="nt">-e</span> <span class="s2">"s|#SOLR_SSL_KEY_STORE=.*</span><span class="nv">$|</span><span class="s2">SOLR_SSL_KEY_STORE=</span><span class="nv">$SOLR_SSL_PATH</span><span class="s2">|"</span> /opt/solr/bin/solr.in.sh <span class="o">&amp;&amp;</span> <span class="se">\
+</span>    sed <span class="nt">-i</span> <span class="nt">-e</span> <span class="s2">"s/#SOLR_SSL_KEY_STORE_PASSWORD=.*</span><span class="nv">$/</span><span class="s2">SOLR_SSL_KEY_STORE_PASSWORD=</span><span class="nv">$SOLR_SSL_PWD</span><span class="s2">/"</span> /opt/solr/bin/solr.in.sh <span class="o">&amp;&amp;</span> <span class="se">\
+</span>    sed <span class="nt">-i</span> <span class="nt">-e</span> <span class="s1">'s/#SOLR_SSL_KEY_STORE_TYPE=.*$/SOLR_SSL_KEY_STORE_TYPE=JKS/'</span> /opt/solr/bin/solr.in.sh <span class="o">&amp;&amp;</span> <span class="se">\
+</span>    sed <span class="nt">-i</span> <span class="nt">-e</span> <span class="s2">"s|#SOLR_SSL_TRUST_STORE=.*</span><span class="nv">$|</span><span class="s2">SOLR_SSL_TRUST_STORE=</span><span class="nv">$SOLR_SSL_PATH</span><span class="s2">|"</span> /opt/solr/bin/solr.in.sh <span class="o">&amp;&amp;</span> <span class="se">\
+</span>    sed <span class="nt">-i</span> <span class="nt">-e</span> <span class="s2">"s/#SOLR_SSL_TRUST_STORE_PASSWORD=.*</span><span class="nv">$/</span><span class="s2">SOLR_SSL_TRUST_STORE_PASSWORD=</span><span class="nv">$SOLR_SSL_PWD</span><span class="s2">/"</span> /opt/solr/bin/solr.in.sh <span class="o">&amp;&amp;</span> <span class="se">\
+</span>    sed <span class="nt">-i</span> <span class="nt">-e</span> <span class="s1">'s/#SOLR_SSL_TRUST_STORE_TYPE=.*$/SOLR_SSL_TRUST_STORE_TYPE=JKS/'</span> /opt/solr/bin/solr.in.sh <span class="o">&amp;&amp;</span> <span class="se">\
+</span>    sed <span class="nt">-i</span> <span class="nt">-e</span> <span class="s1">'s/#SOLR_SSL_NEED_CLIENT_AUTH=.*$/SOLR_SSL_NEED_CLIENT_AUTH=false/'</span> /opt/solr/bin/solr.in.sh <span class="o">&amp;&amp;</span> <span class="se">\
+</span>    sed <span class="nt">-i</span> <span class="nt">-e</span> <span class="s1">'s/#SOLR_SSL_WANT_CLIENT_AUTH=.*$/SOLR_SSL_WANT_CLIENT_AUTH=false/'</span> /opt/solr/bin/solr.in.sh
+</code></pre></div></div>
+<blockquote>
+  <p>When a variable contains special characters that are used as a separator for <code class="highlighter-rouge">sed</code> shell command, you must use a different separator character. In this example I use <code class="highlighter-rouge">|</code> separator for commands that use <code class="highlighter-rouge">SOLR_SSL_PATH</code> variable.</p>
+</blockquote>
+
+<h3 id="copy-local-resources-into-the-docker-image-optional"><em>Copy local resources into the docker image [OPTIONAL]</em></h3>
+<p>I build my Solr image with certain Solr configuration. For that I’ve configured my <code class="highlighter-rouge">solrconfig.xml</code> in a certain way and prepared my <code class="highlighter-rouge">schema.xml</code> file.</p>
+<blockquote>
+  <p>For example, I may want to force Solr instance to use <code class="highlighter-rouge">schema.xml</code> file by configuring <code class="highlighter-rouge">&lt;schemaFactory class="ClassicIndexSchemaFactory" /&gt;</code> in <code class="highlighter-rouge">solrconfig.xml</code>). This is necessary for Sitecore 7.x/8.x versions.</p>
+</blockquote>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">COPY</span><span class="s"> res /opt/res</span>
+</code></pre></div></div>
+<p>In this example I’m copying my local <code class="highlighter-rouge">res</code> folder and all of its contents located in the same directory as <code class="highlighter-rouge">Dockerfile</code> onto the <code class="highlighter-rouge">/opt/res</code> path in my docker image. My <code class="highlighter-rouge">res</code> folder structure looks like this:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/res
+    /configs
+        /solrconfig-6.6.0.xml
+        /schema-6.6.0.xml
+        /managed-schema-6.6.0
+</code></pre></div></div>
+<h3 id="pre-create-solr-cores">Pre-create Solr cores</h3>
+<p>In my case I know upfront what Solr indexes I will need to run my application. Therefore I pre-create all necessary Solr index cores to make them available once Solr instance starts.</p>
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ENV</span><span class="s"> CORE_PREFIX 'myproject'</span>
+<span class="k">ENV</span><span class="s"> CORES_DIR '/opt/solr/server/solr/mycores'</span>
+<span class="k">ENV</span><span class="s"> CONFIG_SOURCE '/opt/solr/server/solr/configsets/basic_configs'</span>
+
+<span class="c"># create CORES_DIR if it doesn't exist</span>
+<span class="k">RUN if</span> <span class="o">[[</span> <span class="nt">-z</span> <span class="nv">$CORES_DIR</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span> <span class="se">\
+</span>        mkdir <span class="nt">-p</span> <span class="nv">$CORES_DIR</span><span class="p">;</span> <span class="se">\
+</span>    <span class="k">fi</span>
+
+<span class="k">ENV</span><span class="s"> XM_CORE_NAMES "${CORE_PREFIX}_core_index, ${CORE_PREFIX}_master_index, ${CORE_PREFIX}_web_index, ${CORE_PREFIX}_marketingdefinitions_master, ${CORE_PREFIX}_marketingdefinitions_web, ${CORE_PREFIX}_marketing_asset_index_master, ${CORE_PREFIX}_marketing_asset_index_web, ${CORE_PREFIX}_testing_index, ${CORE_PREFIX}_suggested_test_index, ${CORE_PREFIX}_fxm_master_index, ${CORE_PREFIX}_fxm_web_index"</span>
+<span class="c"># create xm index cores</span>
+<span class="k">RUN </span><span class="nb">set</span> <span class="nt">-e</span><span class="p">;</span> <span class="se">\
+</span>    <span class="nv">ORIG_IFS</span><span class="o">=</span><span class="k">${</span><span class="nv">IFS</span><span class="k">}</span><span class="p">;</span> <span class="se">\
+</span>    <span class="nv">IFS</span><span class="o">=</span><span class="s1">', '</span><span class="p">;</span> <span class="se">\
+</span>    <span class="k">for </span>core <span class="k">in</span> <span class="k">${</span><span class="nv">XM_CORE_NAMES</span><span class="k">}</span><span class="p">;</span> <span class="k">do</span> <span class="se">\
+</span>        cp <span class="nt">-r</span> <span class="nv">$CONFIG_SOURCE</span>/ <span class="nv">$CORES_DIR</span>/<span class="nv">$core</span><span class="p">;</span> <span class="se">\
+</span>        touch <span class="s2">"</span><span class="nv">$CORES_DIR</span><span class="s2">/</span><span class="nv">$core</span><span class="s2">/core.properties"</span><span class="p">;</span> <span class="se">\
+</span>        <span class="nb">echo </span>created <span class="s2">"</span><span class="nv">$CORES_DIR</span><span class="s2">/</span><span class="nv">$core</span><span class="s2">"</span><span class="p">;</span> <span class="se">\
+</span>        cp /opt/res/configs/xm/schema-6.6.0.xml <span class="k">${</span><span class="nv">CORES_DIR</span><span class="k">}</span>/<span class="k">${</span><span class="nv">core</span><span class="k">}</span>/conf/schema.xml<span class="p">;</span> <span class="se">\
+</span>        cp /opt/res/configs/xm/solrconfig-6.6.0.xml <span class="k">${</span><span class="nv">CORES_DIR</span><span class="k">}</span>/<span class="k">${</span><span class="nv">core</span><span class="k">}</span>/conf/solrconfig.xml<span class="p">;</span> <span class="se">\
+</span>    <span class="k">done</span><span class="p">;</span> <span class="se">\
+</span>    <span class="nv">IFS</span><span class="o">=</span><span class="k">${</span><span class="nv">ORIG_IFS</span><span class="k">}</span><span class="p">;</span> <span class="se">\
+</span>    <span class="nb">exit </span>0
+
+<span class="k">ENV</span><span class="s"> XP_CORE_NAMES "${CORE_PREFIX}_xdb, ${CORE_PREFIX}_xdb_rebuild"</span>
+<span class="c"># create xp index cores</span>
+<span class="k">RUN </span><span class="nb">set</span> <span class="nt">-e</span><span class="p">;</span> <span class="se">\
+</span>    <span class="nv">ORIG_IFS</span><span class="o">=</span><span class="k">${</span><span class="nv">IFS</span><span class="k">}</span><span class="p">;</span> <span class="se">\
+</span>    <span class="nv">IFS</span><span class="o">=</span><span class="s1">', '</span><span class="p">;</span> <span class="se">\
+</span>    <span class="k">for </span>xcore <span class="k">in</span> <span class="k">${</span><span class="nv">XP_CORE_NAMES</span><span class="k">}</span><span class="p">;</span> <span class="k">do</span> <span class="se">\
+</span>        cp <span class="nt">-r</span> <span class="nv">$CONFIG_SOURCE</span>/ <span class="nv">$CORES_DIR</span>/<span class="nv">$xcore</span><span class="p">;</span> <span class="se">\
+</span>        touch <span class="s2">"</span><span class="nv">$CORES_DIR</span><span class="s2">/</span><span class="nv">$xcore</span><span class="s2">/core.properties"</span><span class="p">;</span> <span class="se">\
+</span>        <span class="nb">echo </span>created <span class="s2">"</span><span class="nv">$CORES_DIR</span><span class="s2">/</span><span class="nv">$xcore</span><span class="s2">"</span><span class="p">;</span> <span class="se">\
+</span>        cp /opt/res/configs/xdb/managed-schema-6.6.0 <span class="k">${</span><span class="nv">CORES_DIR</span><span class="k">}</span>/<span class="k">${</span><span class="nv">xcore</span><span class="k">}</span>/conf/managed-schema<span class="p">;</span> <span class="se">\
+</span>    <span class="k">done</span><span class="p">;</span> <span class="se">\
+</span>    <span class="nv">IFS</span><span class="o">=</span><span class="k">${</span><span class="nv">ORIG_IFS</span><span class="k">}</span><span class="p">;</span> <span class="se">\
+</span>    <span class="nb">exit </span>0
+
+</code></pre></div></div>
+<p>I use Solr <code class="highlighter-rouge">basic_configs</code> to pre-create my index cores. If a custom set of configs is required, you can put it into the <code class="highlighter-rouge">res</code> folder and then modify the script to use those configs instead.</p>
+<blockquote>
+  <p>Some of my indexes use <code class="highlighter-rouge">schema.xml</code> and some use <code class="highlighter-rouge">managed-schema</code>. In Solr 6.6.x I don’t have to supply my own <code class="highlighter-rouge">solrconfig.xml</code> for indexes that use <code class="highlighter-rouge">managed-schema</code> as Solr 6.6 uses managed schema by default.</p>
+</blockquote>
+
+<h3 id="build-docker-image">Build docker image</h3>
+<p>Once all <code class="highlighter-rouge">Dockerfile</code> instructions are in place, I need to build my image to add it to my local repository. Image can be build with the following command executed within the directory that contains <code class="highlighter-rouge">Dockerfile</code>:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> my-solr-image <span class="nb">.</span>
+</code></pre></div></div>
+<blockquote>
+  <p>In case you name <code class="highlighter-rouge">Dockerfile</code> something else, you have to supply that file to the <code class="highlighter-rouge">docker build</code> instruction. See <a href="https://docs.docker.com/engine/reference/commandline/build/#build-with-path">official docker doc</a> on this.</p>
+  <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> my-solr-image <span class="nt">-f</span> /path/to/dockerfile-dev <span class="nb">.</span>
+</code></pre></div>  </div>
+  <p>All images that you pull or build are added to local repository. To see all images run this command:</p>
+  <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker images
+</code></pre></div>  </div>
+  <h2 id="run-docker-container-from-my-image">Run docker container from my image</h2>
+  <p>To create a container from an image, run <code class="highlighter-rouge">docker run</code> command:</p>
+  <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--name</span> my-solr-container <span class="nt">-p</span> 8983:8983 my-solr-image
+</code></pre></div>  </div>
+  <p>This command will create a docker container titled <code class="highlighter-rouge">my-solr-container</code> from image <code class="highlighter-rouge">my-solr-image</code> and will map host port 8983 to docker port 8983. Once container is up and running, I can open my browser and connect to my Solr instance at <code class="highlighter-rouge">https://localhost:8983/solr</code>.
+Depending on browser you may need to add exception for SSL certificate when you navigate to Solr instance as your CA may not recognize it.</p>
+</blockquote>
+
+<h2 id="pull-ssl-cert-from-docker-and-install-into-ca-root">Pull SSL cert from docker and install into CA Root</h2>
+<p>Once you get the container up and running, you need to pull cert generated for the container and install into CA Root of your machine to allow HTTPS requests.
+You can use <a href="https://gist.github.com/ivansharamok/552e51305849a9940eac2e5f0326bacf">import-docker-solrssl-cert.ps1</a> script to do this.</p>
+
+<h2 id="additional-commands-notes-scripts"><em>Additional commands, notes, scripts</em></h2>
+<p>A few additional notes and commands on the subject that I used while working with docker containers.</p>
+<h3 id="list-all-docker-containers">List all Docker containers</h3>
+<p>List all running containers</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker ps
+</code></pre></div></div>
+<p>List all existing containers</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker ps <span class="nt">-a</span>
+</code></pre></div></div>
+<p>Get just IDs of all existing containers</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker ps <span class="nt">-a</span> <span class="nt">-q</span>
+</code></pre></div></div>
+<h3 id="remove-all-containers-based-on-certain-image">Remove all containers based on certain image</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker ps <span class="nt">-a</span> <span class="nt">-q</span> <span class="nt">-f</span> <span class="nv">ancestor</span><span class="o">=</span>my-solr-image | %<span class="o">{</span>docker rm <span class="nt">-f</span> <span class="nv">$_</span><span class="o">}</span>
+</code></pre></div></div>
+<blockquote>
+  <p>Complete PowerShell script available <a href="/resources/media/2017-09-20-run-solr+ssl-in-docker-container-with-sitecore-indexes/clean-docker-containers.ps1">here</a>.</p>
+</blockquote>
+
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share">
+              <!-- Go to www.addthis.com/dashboard to customize your tools -->
+              <div class="addthis_inline_share_toolbox"></div>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+        <div id="post-comment" class="sheet post">
+            <div id="disqus_thread"></div>
+        </div>
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#indexing"><span class="octicon octicon-tag"></span>&nbsp;indexing</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#docker"><span class="octicon octicon-tag"></span>&nbsp;docker</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-24/publishing-service-in-docker-container/">Sitecore Publishing Service in Docker Windows Container</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-07/run-solr-container-in-azure-kubernetes-cluster/">Run Solr container in Azure Kubernetes cluster (AKS)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-09-25/run-your-container-in-azure/">Run your container in Azure</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-09-24/flexible-solr-container-image-for-sitecore/">Flexible Solr container image for Sitecore</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-01-05/configure-sitecore-indexes-for-centralized-indexing-solution/">Configure Sitecore indexes for centralized indexing solution</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-01-04/configure-basicauth-for-solr-provider/">Configure BasicAuthentication for Solr provider with Sitecore</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-12-30/script-sitecore-installation-using-solrcloud-with-switchonrebuild-index/">MSDeploy Sitecore installation using SolrCloud with SwitchOnRebuild index</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- Go to www.addthis.com/dashboard to customize your tools -->
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5a24c44d9a3c0d22"></script>
+    </div>
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ivansharamok" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <!-- <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a> -->
+                &nbsp;
+                <a href="http://blog.sharamok.com/"><span class="word-keep">&copy; Ivan Sharamok</span></a>
+        </div>
+        <div class="credit">
+            Credit to WakelessDragon for <a href="https://github.com/WakelessDragon/blog">Jekyll site theme</a>.
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

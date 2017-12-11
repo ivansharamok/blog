@@ -1,0 +1,31 @@
+<parameters>
+  <parameter name="Application Path" description="Full site path where you would like to install your application (i.e., Default Web Site/Content)" defaultValue="Default Web Site/Content" tags="iisapp">
+    <parameterEntry type="ProviderPath" scope="iisapp" match="WebSite" />
+  </parameter>
+  <parameter name="Core Connection String" description="Connection string to enter into config" tags="SQL, Hidden,NoStore">
+    <parameterEntry kind="XmlFile" scope="App_Config\\ConnectionStrings\.config$" match="//connectionStrings/add[@name='core']/@connectionString" />
+  </parameter>
+  <parameter name="Web Connection String" description="Connection string to enter into config" tags="SQL, Hidden,NoStore">
+    <parameterEntry kind="XmlFile" scope="App_Config\\ConnectionStrings\.config$" match="//connectionStrings/add[@name='web']/@connectionString" />
+  </parameter>
+  <parameter name="Cloud Search Connection String" description="Azure Search Services Connection String" tags="Hidden,NoStore">
+    <parameterEntry kind="XmlFile" scope="App_Config\\ConnectionStrings\.config$" match="//connectionStrings/add[@name='cloud.search']/@connectionString" />
+  </parameter>
+  <parameter name="Redis Connection String" description="Redis Connection string to enter into config" tags="Hidden,NoStore">
+    <parameterEntry kind="XmlFile" scope="App_Config\\ConnectionStrings\.config$" match="//connectionStrings/add[@name='redis.sessions']/@connectionString" />
+  </parameter>
+  <parameter name="Application Insights Instrumentation Key" description="Azure Application Insights Instrumentation Key" tags="Hidden,NoStore">
+    <parameterEntry kind="XmlFile" scope="App_Config\\ConnectionStrings\.config$" match="//connectionStrings/add[@name='appinsights.instrumentationkey']/@connectionString" />
+  </parameter>
+  <parameter name="Application Insights Role" description="Sitecore Application Insights Role" tags="Hidden,NoStore">
+    <parameterEntry kind="XmlFile" scope="App_Config\\Include\\zzz\\Sitecore\.Cloud\.ApplicationInsights\.config$" match="//settings/setting[@name='ApplicationInsights.Role']/@value" />
+  </parameter>
+  <parameter name="KeepAlive Url" description="Value for keepalive.aspx" defaultValue="/sitecore/service/keepalive.aspx" tags="AppURL">
+    <parameterEntry kind="XmlFile" scope="App_Config\\Sitecore\.config$" match="//sitecore/scheduling/agent[@type='Sitecore.Tasks.UrlAgent']/param/text()" />
+  </parameter>
+  <parameter name="Build Number" description="" defaultValue="buildnumber" tags="Hidden,NoStore">
+  </parameter>
+  <parameter name="License Xml" tags="Hidden,NoStore">   
+     <parameterEntry type="TextFile" scope= "App_Data\\license.xml" match="LicenseContent" />   
+   </parameter>
+</parameters>

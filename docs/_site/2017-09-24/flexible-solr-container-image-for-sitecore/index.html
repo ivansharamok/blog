@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Flexible Solr container image for Sitecore</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="Flexible Solr container image for Sitecore, solr,containers, indexing,docker, Works on my machine" />
+    <meta name="description" content="Flexible Solr container image for Sitecore, solr,containers, indexing,docker, " />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2017-09-24/flexible-solr-container-image-for-sitecore/" />
+    <link rel="alternate" type="application/rss+xml" title="Works on my machine" href="/feed.xml"  />
+
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" /> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+    <!-- Hide resource from search bots for now -->
+    <meta name="robots" content="noindex,nofollow">
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">Works on my machine</a>
+                    <p class="navbar-text">Notes, thoughts, experiments</p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/archive/" class="word-keep"><span class="octicon octicon-repo"></span>&nbsp;&nbsp;Archive</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <li><a href="#stq=" class="search-button"><span class="octicon octicon-search"></span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>Flexible Solr container image for Sitecore</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Sep 24, 2017
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#solr"><span class="octicon octicon-list-unordered"></span>&nbsp;solr</a><a href="http://localhost:4000/category/#containers"><span class="octicon octicon-list-unordered"></span>&nbsp;containers</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#indexing"><span class="octicon octicon-tag"></span>&nbsp;indexing</a>
+                    
+                    <a class="word-keep" href="http://localhost:4000/tags/#docker"><span class="octicon octicon-tag"></span>&nbsp;docker</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <ul id="markdown-toc">
+  <li><a href="#problem-and-solution" id="markdown-toc-problem-and-solution">Problem and solution</a></li>
+  <li><a href="#prepare-docker-image" id="markdown-toc-prepare-docker-image">Prepare Docker image</a>    <ul>
+      <li><a href="#input-scripts" id="markdown-toc-input-scripts">Input scripts</a></li>
+      <li><a href="#create-basic-cores" id="markdown-toc-create-basic-cores">Create basic cores</a>        <ul>
+          <li><a href="#script-for-sitecore-7x-and-8x" id="markdown-toc-script-for-sitecore-7x-and-8x">Script for Sitecore 7.x and 8.x</a></li>
+          <li><a href="#script-for-sitecore-9" id="markdown-toc-script-for-sitecore-9">Script for Sitecore 9</a></li>
+        </ul>
+      </li>
+      <li><a href="#create-cores-based-on-predefined-configufation" id="markdown-toc-create-cores-based-on-predefined-configufation">Create cores based on predefined configufation</a></li>
+      <li><a href="#utility-script" id="markdown-toc-utility-script"><em>Utility script</em></a></li>
+    </ul>
+  </li>
+  <li><a href="#gotchas-i-ran-into" id="markdown-toc-gotchas-i-ran-into"><em>Gotchas I ran into</em></a>    <ul>
+      <li><a href="#set-permissions-explicitly-in-dockerfile" id="markdown-toc-set-permissions-explicitly-in-dockerfile">Set permissions explicitly in Dockerfile</a></li>
+      <li><a href="#ensure-correct-end-of-line-sequence-lf-vs-crlf" id="markdown-toc-ensure-correct-end-of-line-sequence-lf-vs-crlf">Ensure correct end of line sequence (LF vs CRLF)</a></li>
+    </ul>
+  </li>
+  <li><a href="#examples-to-create-solr-containers-with-various-sitecore-index-configurations" id="markdown-toc-examples-to-create-solr-containers-with-various-sitecore-index-configurations">Examples to create Solr containers with various Sitecore index configurations</a>    <ul>
+      <li><a href="#create-sitecore-indexes-using-all-default-input-parameters" id="markdown-toc-create-sitecore-indexes-using-all-default-input-parameters">Create Sitecore indexes using all default input parameters</a></li>
+      <li><a href="#create-sitecore-indexes-for-xm-configuration-only-with-specified-core-prefix-and-specified-schemaxml-file" id="markdown-toc-create-sitecore-indexes-for-xm-configuration-only-with-specified-core-prefix-and-specified-schemaxml-file">Create Sitecore indexes for xm configuration only with specified core prefix and specified schema.xml file</a></li>
+      <li><a href="#create-sitecore-index-for-xp-configuration-only-using-provided-sorl-configuration-path" id="markdown-toc-create-sitecore-index-for-xp-configuration-only-using-provided-sorl-configuration-path">Create Sitecore index for xp configuration only using provided Sorl configuration path</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p>In article <a href="/2017-09-20/run-solr+ssl-in-docker-container-with-sitecore-indexes/">Solr + SSL in docker container</a> I described how to build an image that always creates exactly same container configuration. That’s ideal for environments where configuration is imutable. However, for mutable environments (e.g. development) I want to be able to run different configurations but may not want to build many docker images to support them. This example provides an option how to get a bit more flexible container image to run Solr with Sitecore indexes in a container.</p>
+
+<blockquote>
+  <p>TL;TR
+Skip all the blabber and go straight to resources:</p>
+  <ul>
+    <li><a href="/resources/media/2017-09-24-flexible-solr-container-image-for-sitecore/Dockerfile">Dockerfile</a></li>
+    <li><a href="/resources/media/2017-09-24-flexible-solr-container-image-for-sitecore/res/scripts/create-basic-cores.sh">create-basic-cores.sh Sitecore 8</a></li>
+    <li><a href="/resources/media/2017-09-24-flexible-solr-container-image-for-sitecore/res/scripts/create-basic-cores-sc9.sh">create-basic-cores.sh Sitecore 9</a></li>
+    <li><a href="/resources/media/2017-09-24-flexible-solr-container-image-for-sitecore/res/scripts/create-config-cores.sh">create-config-cores.sh</a></li>
+    <li><a href="/resources/media/2017-09-24-flexible-solr-container-image-for-sitecore/res/scripts/create-core.sh">create-core.sh</a></li>
+  </ul>
+</blockquote>
+
+<blockquote>
+  <p>This article assumes the following folder configuration structure for docker build directory:</p>
+  <ul>
+    <li>/build_dir
+      <ul>
+        <li>Dockerfile</li>
+        <li>/res
+          <ul>
+            <li>/configs
+              <ul>
+                <li>/xm
+                  <ul>
+                    <li><code class="highlighter-rouge">schema.xml</code></li>
+                    <li><code class="highlighter-rouge">solrconfi.xml</code></li>
+                  </ul>
+                </li>
+                <li>/xdb
+                  <ul>
+                    <li><code class="highlighter-rouge">managed-schema</code></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li>/scripts
+              <ul>
+                <li><code class="highlighter-rouge">create-basic-cores.sh</code></li>
+                <li><code class="highlighter-rouge">create-basic-cores-sc9.sh</code></li>
+                <li><code class="highlighter-rouge">create-config-cores.sh</code></li>
+                <li><code class="highlighter-rouge">create-core.sh</code></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</blockquote>
+
+<h2 id="problem-and-solution">Problem and solution</h2>
+<p>In my local dev environment I run multiple Sitecore applications that require Solr indexes. Each application has its own set of indexes which may have unique names or configurations. To simplify management of Solr containers to serve different Solr index configurations, I decided to create a docker image that I can pass input parameters to manipulate container state configuration just enough to get me a set of fresh Solr indexes with desired configuration.</p>
+<blockquote>
+  <p>I don’t recommed this for production container images. I believe for prod images container configuration can be mutated only at image level.</p>
+</blockquote>
+
+<p>My solution here is to provide an option to pass a script with parameters to create a container instance. As I shift away from a determined configuration at container image level to container instance, I have to account for container instance state in my scripts. In my example that’s to make sure I don’t re-create indexes every time a container is stopped and then started. That’s because each time you start a contanier instance, it executes input parameters that it received as the instance was created in the first place.</p>
+
+<h2 id="prepare-docker-image">Prepare Docker image</h2>
+<p>In this example I moved the part that pre-created Solr index cores described in <a href="/2017-09-20/run-solr+ssl-in-docker-container-with-sitecore-indexes/">Solr + SSL in docker container</a> article and moved it to shell script.</p>
+
+<h3 id="input-scripts">Input scripts</h3>
+<p>I created 2 shell scripts to provide options to create Solr cores. One allows me to create cores with these parameters:</p>
+<ul>
+  <li>specified Sitecore confiruation type (xm, xp, xp!)
+    <ul>
+      <li>xm - content search cores only (core, master, web, etc.)</li>
+      <li>xp - content search + xdb cores</li>
+      <li>xp! - xdb cores only</li>
+    </ul>
+  </li>
+  <li>specified core prefix (i.e. myprefix_core_index, myprefix_master_index, etc.)</li>
+  <li>specified <code class="highlighter-rouge">schema</code> (e.g. /shema.xml) file should be used. <em>When <code class="highlighter-rouge">xm</code> or <code class="highlighter-rouge">xp</code> configuration type is used, provides path to schema file for content search cores <strong>only</strong></em>. The <code class="highlighter-rouge">xp</code> and <code class="highlighter-rouge">xp!</code> configuration types use <code class="highlighter-rouge">schema</code> from <code class="highlighter-rouge">/opt/res/configs/xp/managed-schema</code> path.</li>
+  <li>specified <code class="highlighter-rouge">solrconfig</code> file should be used. <em>Used for content search cores <strong>only</strong></em>.
+    <blockquote>
+      <p>Explore scipts to see their efault parameters.</p>
+    </blockquote>
+  </li>
+</ul>
+
+<h3 id="create-basic-cores">Create basic cores</h3>
+<p>This script creates Solr cores according to specified configuration type based on <code class="highlighter-rouge">basic_configs</code> configset and provides options to set core prefixes, custom <code class="highlighter-rouge">schema</code> (e.g. <code class="highlighter-rouge">/res/configs/xm/my-schema.xml</code> or <code class="highlighter-rouge">/res/configs/xm/my-managed-schema</code>) file and custom <code class="highlighter-rouge">solrconfig</code> (e.g. <code class="highlighter-rouge">/res/configs/my-solrconfig.xml</code>) file.</p>
+<h4 id="script-for-sitecore-7x-and-8x">Script for Sitecore 7.x and 8.x</h4>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># set variables</span>
+<span class="nv">configpath</span><span class="o">=</span><span class="s1">'/opt/res/configs/xm'</span>
+<span class="nv">coresdir</span><span class="o">=</span><span class="s2">"/opt/solr/server/solr/mycores"</span>
+<span class="nv">configsource</span><span class="o">=</span><span class="s1">'/opt/solr/server/solr/configsets/basic_configs'</span>
+<span class="nv">CONFIG_TYPE</span><span class="o">=</span><span class="k">${</span><span class="nv">1</span><span class="k">:-</span><span class="s1">'xp'</span><span class="k">}</span>
+<span class="nv">CORE_PREFIX</span><span class="o">=</span><span class="k">${</span><span class="nv">2</span><span class="k">:-</span><span class="s1">'sitecore'</span><span class="k">}</span>
+<span class="nv">SCHEMA</span><span class="o">=</span><span class="k">${</span><span class="nv">3</span><span class="k">:-</span><span class="s2">"</span><span class="nv">$configpath</span><span class="s2">/schema.xml"</span><span class="k">}</span>
+<span class="nv">SOLRCONFIG</span><span class="o">=</span><span class="k">${</span><span class="nv">4</span><span class="k">:-</span><span class="s2">"</span><span class="nv">$configpath</span><span class="s2">/solrconfig.xml"</span><span class="k">}</span>
+
+<span class="k">if</span> <span class="o">[[</span> <span class="nt">-z</span> <span class="nv">$SOLR_HOME</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then
+    </span><span class="nv">coresdir</span><span class="o">=</span><span class="s2">"/opt/solr/server/solr/mycores"</span>
+    mkdir <span class="nt">-p</span> <span class="nv">$coresdir</span>
+<span class="k">else
+    </span><span class="nv">coresdir</span><span class="o">=</span><span class="nv">$SOLR_HOME</span>
+<span class="k">fi
+
+if</span> <span class="o">[[</span> <span class="s1">'xp!'</span> <span class="o">!=</span> <span class="nv">$CONFIG_TYPE</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
+    <span class="c"># array of xm core names</span>
+    <span class="nb">declare</span> <span class="nt">-a</span> <span class="nv">cores</span><span class="o">=(</span><span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_core_index"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_master_index"</span> 
+                        <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_web_index"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_marketingdefinitions_master"</span>
+                        <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_marketingdefinitions_web"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_marketing_asset_index_master"</span>
+                        <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_marketing_asset_index_web"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_testing_index"</span>
+                        <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_suggested_test_index"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_fxm_master_index"</span>
+                        <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_fxm_web_index"</span><span class="o">)</span>
+    <span class="c"># create xm cores</span>
+    <span class="k">for </span>core <span class="k">in</span> <span class="k">${</span><span class="nv">cores</span><span class="p">[@]</span><span class="k">}</span><span class="p">;</span> <span class="k">do</span>
+        /opt/res/scripts/create-core.sh <span class="s2">"</span><span class="k">${</span><span class="nv">core</span><span class="k">}</span><span class="s2">"</span>
+        cp <span class="nv">$SCHEMA</span> <span class="k">${</span><span class="nv">coresdir</span><span class="k">}</span>/<span class="k">${</span><span class="nv">core</span><span class="k">}</span>/conf/schema.xml
+        cp <span class="nv">$SOLRCONFIG</span> <span class="k">${</span><span class="nv">coresdir</span><span class="k">}</span>/<span class="k">${</span><span class="nv">core</span><span class="k">}</span>/conf/solrconfig.xml
+    <span class="k">done
+fi</span>
+
+<span class="c"># run this block only for xp || xp! configuration types</span>
+<span class="k">if</span> <span class="o">[[</span> <span class="s1">'xp'</span> <span class="o">==</span> <span class="nv">$CONFIG_TYPE</span> <span class="o">]]</span> <span class="o">||</span> <span class="o">[[</span> <span class="s1">'xp!'</span> <span class="o">==</span> <span class="nv">$CONFIG_TYPE</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
+    <span class="c"># array of xdb core names</span>
+    <span class="nb">declare</span> <span class="nt">-a</span> <span class="nv">xcores</span><span class="o">=(</span><span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_xdb"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_xdb_rebuild"</span><span class="o">)</span>
+
+    <span class="k">for </span>xcore <span class="k">in</span> <span class="k">${</span><span class="nv">xcores</span><span class="p">[@]</span><span class="k">}</span><span class="p">;</span> <span class="k">do</span>
+        /opt/res/scripts/create-core.sh <span class="s2">"</span><span class="k">${</span><span class="nv">xcore</span><span class="k">}</span><span class="s2">"</span>
+        cp /opt/res/configs/xdb/managed-schema <span class="k">${</span><span class="nv">coresdir</span><span class="k">}</span>/<span class="k">${</span><span class="nv">xcore</span><span class="k">}</span>/conf/managed-schema
+    <span class="k">done
+fi</span>
+</code></pre></div></div>
+
+<h4 id="script-for-sitecore-9">Script for Sitecore 9</h4>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">configpath</span><span class="o">=</span><span class="s1">'/opt/res/configs/xm'</span>
+<span class="nv">coresdir</span><span class="o">=</span><span class="s2">"/opt/solr/server/solr/mycores"</span>
+<span class="nv">configsource</span><span class="o">=</span><span class="s1">'/opt/solr/server/solr/configsets/basic_configs'</span>
+<span class="nv">CONFIG_TYPE</span><span class="o">=</span><span class="k">${</span><span class="nv">1</span><span class="k">:-</span><span class="s1">'xp'</span><span class="k">}</span>
+<span class="nv">CORE_PREFIX</span><span class="o">=</span><span class="k">${</span><span class="nv">2</span><span class="k">:-</span><span class="s1">'sitecore'</span><span class="k">}</span>
+<span class="c"># do not set default shema path as Sitecore 9.0 and up uses managed-schema file</span>
+<span class="nv">SCHEMA</span><span class="o">=</span><span class="k">${</span><span class="nv">3</span><span class="k">}</span>
+<span class="c"># data_driven_schema_configs has add-unknown-fields-to-the-schema processor enabled by default which is required for managed-schema</span>
+<span class="nv">SOLRCONFIG</span><span class="o">=</span><span class="k">${</span><span class="nv">4</span><span class="k">:-</span><span class="s1">'/opt/solr/server/solr/configsets/data_driven_schema_configs/conf/solrconfig.xml'</span><span class="k">}</span>
+<span class="nv">UNIQUEID</span><span class="o">=</span><span class="k">${</span><span class="nv">5</span><span class="k">:-</span><span class="s2">"_uniqueid"</span><span class="k">}</span>
+<span class="nv">FIELDIDTOREPLACE</span><span class="o">=</span><span class="k">${</span><span class="nv">6</span><span class="k">:-</span><span class="s2">"id"</span><span class="k">}</span>
+
+<span class="k">if</span> <span class="o">[[</span> <span class="nt">-z</span> <span class="nv">$SOLR_HOME</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then
+    </span><span class="nv">coresdir</span><span class="o">=</span><span class="s2">"/opt/solr/server/solr/mycores"</span>
+    mkdir <span class="nt">-p</span> <span class="nv">$coresdir</span>
+<span class="k">else
+    </span><span class="nv">coresdir</span><span class="o">=</span><span class="nv">$SOLR_HOME</span>
+<span class="k">fi
+
+if</span> <span class="o">[[</span> <span class="s1">'xp!'</span> <span class="o">!=</span> <span class="nv">$CONFIG_TYPE</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
+    <span class="c"># array of xm core names</span>
+    <span class="nb">declare</span> <span class="nt">-a</span> <span class="nv">cores</span><span class="o">=(</span><span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_core_index"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_master_index"</span> 
+                        <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_web_index"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_marketingdefinitions_master"</span>
+                        <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_marketingdefinitions_web"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_marketing_asset_index_master"</span>
+                        <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_marketing_asset_index_web"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_testing_index"</span>
+                        <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_suggested_test_index"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_fxm_master_index"</span>
+                        <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_fxm_web_index"</span><span class="o">)</span>
+    <span class="c"># create xm cores</span>
+    <span class="nv">uniquefield</span><span class="o">=</span><span class="s2">"&lt;field name=</span><span class="se">\"</span><span class="nv">$UNIQUEID</span><span class="se">\"</span><span class="s2"> type=</span><span class="se">\"</span><span class="s2">string</span><span class="se">\"</span><span class="s2"> indexed=</span><span class="se">\"</span><span class="s2">true</span><span class="se">\"</span><span class="s2"> stored=</span><span class="se">\"</span><span class="s2">true</span><span class="se">\"</span><span class="s2"> required=</span><span class="se">\"</span><span class="s2">true</span><span class="se">\"</span><span class="s2"> multiValued=</span><span class="se">\"</span><span class="s2">false</span><span class="se">\"</span><span class="s2"> /&gt;"</span>
+    <span class="k">for </span>core <span class="k">in</span> <span class="k">${</span><span class="nv">cores</span><span class="p">[@]</span><span class="k">}</span><span class="p">;</span> <span class="k">do</span>
+        /opt/res/scripts/create-core.sh <span class="s2">"</span><span class="k">${</span><span class="nv">core</span><span class="k">}</span><span class="s2">"</span>
+        <span class="k">if</span> <span class="o">[[</span> <span class="o">!</span> <span class="nt">-z</span> <span class="nv">$SCHEMA</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then
+            </span><span class="nb">echo</span> <span class="s2">"copying </span><span class="nv">$SCHEMA</span><span class="s2"> to </span><span class="k">${</span><span class="nv">coresdir</span><span class="k">}</span><span class="s2">/</span><span class="k">${</span><span class="nv">core</span><span class="k">}</span><span class="s2">/conf/managed-schema"</span>
+            cp <span class="nv">$SCHEMA</span> <span class="k">${</span><span class="nv">coresdir</span><span class="k">}</span>/<span class="k">${</span><span class="nv">core</span><span class="k">}</span>/conf/managed-schema
+        <span class="k">else</span>
+            <span class="c"># update schema file unique key</span>
+            <span class="nb">echo</span> <span class="s2">"changing &lt;field name=</span><span class="se">\"</span><span class="nv">$FIELDIDTOREPLACE</span><span class="se">\"</span><span class="s2">... /&gt;"</span>
+            sed <span class="nt">-i</span> <span class="nt">-e</span> <span class="s2">"s|&lt;field name=</span><span class="se">\"</span><span class="nv">$FIELDIDTOREPLACE</span><span class="se">\"</span><span class="s2">.*</span><span class="nv">$|$uniquefield</span><span class="s2">|"</span> <span class="k">${</span><span class="nv">coresdir</span><span class="k">}</span>/<span class="k">${</span><span class="nv">core</span><span class="k">}</span>/conf/managed-schema
+            <span class="nb">echo</span> <span class="s2">"changing &lt;uniqueKey&gt;</span><span class="nv">$FIELDIDTOREPLACE</span><span class="s2">&lt;/uniqueKey&gt;"</span>
+            sed <span class="nt">-i</span> <span class="nt">-e</span> <span class="s2">"s|&lt;uniqueKey&gt;</span><span class="nv">$FIELDIDTOREPLACE</span><span class="s2">&lt;/uniqueKey&gt;</span><span class="nv">$|</span><span class="s2">&lt;uniqueKey&gt;</span><span class="nv">$UNIQUEID</span><span class="s2">&lt;/uniqueKey&gt;|"</span> <span class="k">${</span><span class="nv">coresdir</span><span class="k">}</span>/<span class="k">${</span><span class="nv">core</span><span class="k">}</span>/conf/managed-schema
+        <span class="k">fi
+        if</span> <span class="o">[[</span> <span class="o">!</span> <span class="nt">-z</span> <span class="nv">$SOLRCONFIG</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then
+            </span><span class="nb">echo</span> <span class="s2">"copying </span><span class="nv">$SOLRCONFIG</span><span class="s2"> to </span><span class="k">${</span><span class="nv">coresdir</span><span class="k">}</span><span class="s2">/</span><span class="k">${</span><span class="nv">core</span><span class="k">}</span><span class="s2">/conf/solrconfig.xml"</span>
+            cp <span class="nv">$SOLRCONFIG</span> <span class="k">${</span><span class="nv">coresdir</span><span class="k">}</span>/<span class="k">${</span><span class="nv">core</span><span class="k">}</span>/conf/solrconfig.xml
+        <span class="k">fi
+
+    done
+fi</span>
+
+<span class="c"># run this block only for xp || xp! configuration types</span>
+<span class="k">if</span> <span class="o">[[</span> <span class="s1">'xp'</span> <span class="o">==</span> <span class="nv">$CONFIG_TYPE</span> <span class="o">]]</span> <span class="o">||</span> <span class="o">[[</span> <span class="s1">'xp!'</span> <span class="o">==</span> <span class="nv">$CONFIG_TYPE</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
+    <span class="c"># array of xdb core names</span>
+    <span class="nb">declare</span> <span class="nt">-a</span> <span class="nv">xcores</span><span class="o">=(</span><span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_xdb"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_xdb_rebuild"</span><span class="o">)</span>
+
+    <span class="k">for </span>xcore <span class="k">in</span> <span class="k">${</span><span class="nv">xcores</span><span class="p">[@]</span><span class="k">}</span><span class="p">;</span> <span class="k">do</span>
+        /opt/res/scripts/create-core.sh <span class="s2">"</span><span class="k">${</span><span class="nv">xcore</span><span class="k">}</span><span class="s2">"</span>
+        cp /opt/res/configs/xdb/managed-schema <span class="k">${</span><span class="nv">coresdir</span><span class="k">}</span>/<span class="k">${</span><span class="nv">xcore</span><span class="k">}</span>/conf/managed-schema
+    <span class="k">done
+fi</span>
+</code></pre></div></div>
+<p>Get full code for <a href="/resources/media/2017-09-24-flexible-solr-container-image-for-sitecore/res/scripts/create-basic-cores.sh">create-basic-cores.sh Sitecore 8</a> script.<br />
+Get full code for <a href="/resources/media/2017-09-24-flexible-solr-container-image-for-sitecore/res/scripts/create-basic-cores-sc9.sh">create-basic-cores-sc9.sh Sitecore 9</a> script.</p>
+<blockquote>
+  <p>Sitecore 9 requires managed-schema to be populated with fields before you can start indexing Sitecore items. You can do this by calling <code class="highlighter-rouge">/sitecore/admin/PopulateManagedSchema.aspx?indexes=all</code> service page.<br />
+As an alternative run <a href="https://gist.github.com/ivansharamok/48ce60475d176511eeae16bf254e6dea">this script</a> after you spin up a new container with fresh Sitecore 9 indexes.</p>
+</blockquote>
+
+<h3 id="create-cores-based-on-predefined-configufation">Create cores based on predefined configufation</h3>
+<p>Default configset <code class="highlighter-rouge">basic_configs</code> is a quick way to create a bare bone Solr core. However, a project may require custom Solr core configuraiton with custom stopwords or several languages or else. For this purpose I made another script that creates Solr cores using path that contains custom configuration.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># set variables</span>
+<span class="nv">configpath</span><span class="o">=</span><span class="s1">'/opt/res/configs'</span>
+<span class="nv">coresdir</span><span class="o">=</span><span class="s2">"/opt/solr/server/solr/mycores"</span>
+<span class="nv">configsource</span><span class="o">=</span><span class="s1">'/opt/solr/server/solr/configsets/basic_configs'</span>
+<span class="nv">CONFIG_TYPE</span><span class="o">=</span><span class="k">${</span><span class="nv">1</span><span class="k">:-</span><span class="s1">'xp'</span><span class="k">}</span>
+<span class="nv">CORE_PREFIX</span><span class="o">=</span><span class="k">${</span><span class="nv">2</span><span class="k">:-</span><span class="s1">'sitecore'</span><span class="k">}</span>
+<span class="nv">CONFIG_DIR</span><span class="o">=</span><span class="k">${</span><span class="nv">3</span><span class="k">}</span>
+
+<span class="k">if</span> <span class="o">[[</span> <span class="nt">-z</span> <span class="nv">$SOLR_HOME</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then
+    </span><span class="nv">coresdir</span><span class="o">=</span><span class="s2">"/opt/solr/server/solr/mycores"</span>
+    mkdir <span class="nt">-p</span> <span class="nv">$coresdir</span>
+<span class="k">else
+    </span><span class="nv">coresdir</span><span class="o">=</span><span class="nv">$SOLR_HOME</span>
+<span class="k">fi</span>
+<span class="c"># if config dir is not provide use basic_configs</span>
+<span class="k">if</span> <span class="o">[[</span> <span class="nt">-z</span> <span class="nv">$CONFIG_DIR</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then
+    </span><span class="nv">CONFIG_DIR</span><span class="o">=</span><span class="nv">$configsource</span>
+<span class="k">fi</span>
+
+<span class="c"># array of xm core names</span>
+<span class="k">if</span> <span class="o">[[</span> <span class="s1">'xp!'</span> <span class="o">!=</span> <span class="nv">$CONFIG_TYPE</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then
+    </span><span class="nb">declare</span> <span class="nt">-a</span> <span class="nv">cores</span><span class="o">=(</span><span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_core_index"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_master_index"</span> 
+                        <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_web_index"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_marketingdefinitions_master"</span>
+                        <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_marketingdefinitions_web"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_marketing_asset_index_master"</span>
+                        <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_marketing_asset_index_web"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_testing_index"</span>
+                        <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_suggested_test_index"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_fxm_master_index"</span>
+                        <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_fxm_web_index"</span><span class="o">)</span>
+    <span class="c"># create xm cores</span>
+    <span class="k">for </span>core <span class="k">in</span> <span class="k">${</span><span class="nv">cores</span><span class="p">[@]</span><span class="k">}</span><span class="p">;</span> <span class="k">do</span>
+        /opt/res/scripts/create-core.sh <span class="s2">"</span><span class="k">${</span><span class="nv">core</span><span class="k">}</span><span class="s2">"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CONFIG_DIR</span><span class="k">}</span><span class="s2">}"</span>
+    <span class="k">done
+fi</span>
+<span class="c"># run this block only for xp || xp! configuration types</span>
+<span class="k">if</span> <span class="o">[[</span> <span class="s1">'xp'</span> <span class="o">==</span> <span class="nv">$CONFIG_TYPE</span> <span class="o">]]</span> <span class="o">||</span> <span class="o">[[</span> <span class="s1">'xp!'</span> <span class="o">==</span> <span class="nv">$CONFIG_TYPE</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
+    <span class="c"># array of xdb core names</span>
+    <span class="nb">declare</span> <span class="nt">-a</span> <span class="nv">xcores</span><span class="o">=(</span><span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_xdb"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CORE_PREFIX</span><span class="k">}</span><span class="s2">_xdb_rebuild"</span><span class="o">)</span>
+
+    <span class="k">for </span>xcore <span class="k">in</span> <span class="k">${</span><span class="nv">xcores</span><span class="p">[@]</span><span class="k">}</span><span class="p">;</span> <span class="k">do</span>
+        /opt/res/scripts/create-core.sh <span class="s2">"</span><span class="k">${</span><span class="nv">xcore</span><span class="k">}</span><span class="s2">"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">CONFIG_DIR</span><span class="k">}</span><span class="s2">"</span>
+    <span class="k">done
+fi</span>
+</code></pre></div></div>
+<p>Get full code for <a href="/resources/media/2017-09-24-flexible-solr-container-image-for-sitecore/res/scripts/create-config-cores.sh">create-config-cores.sh</a> script.</p>
+
+<h3 id="utility-script"><em>Utility script</em></h3>
+<p>To facilitate index core creation, I use <a href="/resources/media/2017-09-24-flexible-solr-container-image-for-sitecore/res/scripts/create-core.sh">create-core.sh</a> script. That’s where I check for core’s existance before I create one.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># set core variables</span>
+<span class="nv">CORE</span><span class="o">=</span><span class="k">${</span><span class="nv">1</span><span class="k">:-</span><span class="nv">gettingstarted</span><span class="k">}</span>
+<span class="nv">CONFIG_SOURCE</span><span class="o">=</span><span class="k">${</span><span class="nv">2</span><span class="k">:-</span><span class="s1">'/opt/solr/server/solr/configsets/basic_configs'</span><span class="k">}</span>
+<span class="k">if</span> <span class="o">[[</span> <span class="nt">-z</span> <span class="nv">$SOLR_HOME</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then
+    </span><span class="nv">coresdir</span><span class="o">=</span><span class="s2">"/opt/solr/server/solr/mycores"</span>
+    mkdir <span class="nt">-p</span> <span class="nv">$coresdir</span>
+<span class="k">else
+    </span><span class="nv">coresdir</span><span class="o">=</span><span class="nv">$SOLR_HOME</span>
+<span class="k">fi</span>
+<span class="c"># create cores from /configsets/basic_configs</span>
+<span class="nv">coredir</span><span class="o">=</span><span class="s2">"</span><span class="nv">$coresdir</span><span class="s2">/</span><span class="nv">$CORE</span><span class="s2">"</span>
+<span class="k">if</span> <span class="o">[[</span> <span class="o">!</span> <span class="nt">-d</span> <span class="nv">$coredir</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then
+    </span>cp <span class="nt">-r</span> <span class="nv">$CONFIG_SOURCE</span>/ <span class="nv">$coredir</span>
+    touch <span class="s2">"</span><span class="nv">$coredir</span><span class="s2">/core.properties"</span>
+    <span class="nb">echo </span>created <span class="s2">"</span><span class="nv">$coredir</span><span class="s2">"</span>
+<span class="k">else
+    </span><span class="nb">echo</span> <span class="s2">"core </span><span class="nv">$CORE</span><span class="s2"> already exists"</span>
+<span class="k">fi</span>
+</code></pre></div></div>
+
+<h2 id="gotchas-i-ran-into"><em>Gotchas I ran into</em></h2>
+<p>A few pitfalls I ran into while using Docker on Windows and Mac.</p>
+
+<h3 id="set-permissions-explicitly-in-dockerfile">Set permissions explicitly in Dockerfile</h3>
+<p>An issue I ran into was the difference in permissions that get assigned to the files when you copy them from local Windows vs Mac OS into docker image. Files copied from Win OS get elevated permissions while files copied from Mac have to be assigned proper permissions to perform necessary actions on them (e.g. execute a shell script). To execute scipts you need <code class="highlighter-rouge">chmod +x</code> or <code class="highlighter-rouge">chmod 700</code> permission assigned to shell scripts. Here are instructions in the Dockerfile I had to set the proper permission level:</p>
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># use root user to set permissions</span>
+<span class="k">USER</span><span class="s"> root</span>
+
+<span class="c"># other instructions here. See full Dockerfile for more details.</span>
+
+<span class="c"># copy local res directory to /opt/res path in docker image</span>
+<span class="k">COPY</span><span class="s"> res /opt/res</span>
+<span class="c"># set $SOLR_USER (this variable is a part of original image) ownership for /opt/res path and its contents</span>
+<span class="k">RUN </span>chown <span class="nt">-R</span> <span class="nv">$SOLR_USER</span>:<span class="nv">$SOLR_USER</span> /opt/res
+<span class="c"># set executable permission for /opt/res contents</span>
+<span class="k">RUN </span>chmod <span class="nt">-R</span> 700 /opt/res
+<span class="c"># set user back to $SOLR_USER</span>
+<span class="k">USER</span><span class="s"> $SOLR_USER</span>
+</code></pre></div></div>
+
+<h3 id="ensure-correct-end-of-line-sequence-lf-vs-crlf">Ensure correct end of line sequence (LF vs CRLF)</h3>
+<p>Since I used Linux based Docker images and run shell scripts in them, I have to make sure my scripts use LF end of line sequence. That’s easy to miss when writing shell scripts on Windows. Any modern text editor can change that. To name a few <code class="highlighter-rouge">VS Code</code>, <code class="highlighter-rouge">Nodepad++</code>.
+One indication you forgot to set proper end of line sequence is this error when you create a container that executes a script:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Executing /opt/res/scripts/create-basic-cores.sh xm giddyup
+/opt/res/scripts/create-basic-cores.sh: /opt/res/scripts/create-core.sh: /bin/bash^M: bad interpreter: No such file or directory
+</code></pre></div></div>
+
+<h2 id="examples-to-create-solr-containers-with-various-sitecore-index-configurations">Examples to create Solr containers with various Sitecore index configurations</h2>
+<p>Here are a few examples how  you can create containers using input scripts.</p>
+<h3 id="create-sitecore-indexes-using-all-default-input-parameters">Create Sitecore indexes using all default input parameters</h3>
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run -d -p 9000:8983 solr create-basic-cores.sh
+</code></pre></div></div>
+<p>Command creates a container from image named <code class="highlighter-rouge">solr</code> for <code class="highlighter-rouge">xp</code> configuration type (i.e. content serach + xdb cores) with prefix <code class="highlighter-rouge">sitecore</code>, using <code class="highlighter-rouge">/opt/res/configs/xm/schema.xml</code> schema file and <code class="highlighter-rouge">/opt/res/configs/xm/solrconfig.xml</code> solrconfig file. It explicitly maps host port <code class="highlighter-rouge">9000</code> to container port <code class="highlighter-rouge">8983</code>.</p>
+
+<h3 id="create-sitecore-indexes-for-xm-configuration-only-with-specified-core-prefix-and-specified-schemaxml-file">Create Sitecore indexes for xm configuration only with specified core prefix and specified schema.xml file</h3>
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run -P -d solr create-basic-cores.sh xm sc82 /opt/res/configs/xm/sc82-schema.xml
+</code></pre></div></div>
+<p>Command creates a container with Solr cores for <code class="highlighter-rouge">xm</code> configuration type only (i.e. content search indexes only) with prefix <code class="highlighter-rouge">sc82</code> (e.g. <code class="highlighter-rouge">sc82_core_index</code>) and each content search index has schema file based on <code class="highlighter-rouge">/opt/res/configs/xm/sc82-schema.xml</code>.</p>
+
+<h3 id="create-sitecore-index-for-xp-configuration-only-using-provided-sorl-configuration-path">Create Sitecore index for xp configuration only using provided Sorl configuration path</h3>
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run -P -d solr create-config-cores.sh xp! sc81 /opt/res/configs/xdb/sc81configs
+</code></pre></div></div>
+<p>Command creates <code class="highlighter-rouge">xp</code> configuartion indexes only using Solr configuration from path <code class="highlighter-rouge">/opt/res/configs/xdb/sc81configs</code>.</p>
+
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share">
+              <!-- Go to www.addthis.com/dashboard to customize your tools -->
+              <div class="addthis_inline_share_toolbox"></div>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+        <div id="post-comment" class="sheet post">
+            <div id="disqus_thread"></div>
+        </div>
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#indexing"><span class="octicon octicon-tag"></span>&nbsp;indexing</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#docker"><span class="octicon octicon-tag"></span>&nbsp;docker</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-24/publishing-service-in-docker-container/">Sitecore Publishing Service in Docker Windows Container</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-07/run-solr-container-in-azure-kubernetes-cluster/">Run Solr container in Azure Kubernetes cluster (AKS)</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-09-25/run-your-container-in-azure/">Run your container in Azure</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-09-20/run-solr+ssl-in-docker-container-with-sitecore-indexes/">Run Solr + SSL in Docker container with Sitecore indexes</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-01-05/configure-sitecore-indexes-for-centralized-indexing-solution/">Configure Sitecore indexes for centralized indexing solution</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-01-04/configure-basicauth-for-solr-provider/">Configure BasicAuthentication for Solr provider with Sitecore</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-12-30/script-sitecore-installation-using-solrcloud-with-switchonrebuild-index/">MSDeploy Sitecore installation using SolrCloud with SwitchOnRebuild index</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- Go to www.addthis.com/dashboard to customize your tools -->
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5a24c44d9a3c0d22"></script>
+    </div>
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ivansharamok" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <!-- <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a> -->
+                &nbsp;
+                <a href="http://blog.sharamok.com/"><span class="word-keep">&copy; Ivan Sharamok</span></a>
+        </div>
+        <div class="credit">
+            Credit to WakelessDragon for <a href="https://github.com/WakelessDragon/blog">Jekyll site theme</a>.
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>

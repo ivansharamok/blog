@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Run Solr container in Azure Kubernetes cluster (AKS)</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="Run Solr container in Azure Kubernetes cluster (AKS), solr,containers,azure, indexing,docker,kubernetes, Works on my machine" />
+    <meta name="description" content="Run Solr container in Azure Kubernetes cluster (AKS), solr,containers,azure, indexing,docker,kubernetes, " />
+    <meta name="theme-color" content="#2CA6CB"/>
+    <link rel="shortcut icon" type="image/x-icon" media="screen" href="http://localhost:4000/favicon.ico" />
+    <link rel="canonical" href="http://localhost:4000/2017-11-07/run-solr-container-in-azure-kubernetes-cluster/" />
+    <link rel="alternate" type="application/rss+xml" title="Works on my machine" href="/feed.xml"  />
+
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/octicons/3.5.0/octicons.min.css" >
+    <!-- <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" /> -->
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/highlight.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost:4000/static/css/post.css" />
+    
+    <!-- Hide resource from search bots for now -->
+    <meta name="robots" content="noindex,nofollow">
+</head>
+
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-tiffany rectangle" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://localhost:4000/">Works on my machine</a>
+                    <p class="navbar-text">Notes, thoughts, experiments</p>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        
+                        <li>
+                        <a href="http://localhost:4000/" class="word-keep"><span class="octicon octicon-book"></span></span>&nbsp;&nbsp;Blog</a>
+                        </li>
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/archive/" class="word-keep"><span class="octicon octicon-repo"></span>&nbsp;&nbsp;Archive</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        <li>
+                            <a href="http://localhost:4000/category/" class="word-keep"><span class="octicon octicon-list-unordered"></span>&nbsp;&nbsp;Category</a>
+                        </li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <li><a href="#stq=" class="search-button"><span class="octicon octicon-search"></span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+    <div class="content col-lg-9">
+        <div class="sheet post">
+          <header>
+            <h2>Run Solr container in Azure Kubernetes cluster (AKS)</h2>
+            <p class="post-meta">
+                <span class="octicon octicon-clock"></span> Nov 7, 2017
+            </p>
+            <p class="post-tag">
+                <span><a href="http://localhost:4000/category/#solr"><span class="octicon octicon-list-unordered"></span>&nbsp;solr</a><a href="http://localhost:4000/category/#containers"><span class="octicon octicon-list-unordered"></span>&nbsp;containers</a><a href="http://localhost:4000/category/#azure"><span class="octicon octicon-list-unordered"></span>&nbsp;azure</a></span>
+                <span>
+                    <a class="word-keep" href="http://localhost:4000/tags/#indexing"><span class="octicon octicon-tag"></span>&nbsp;indexing</a>
+                    
+                    <a class="word-keep" href="http://localhost:4000/tags/#docker"><span class="octicon octicon-tag"></span>&nbsp;docker</a>
+                    
+                    <a class="word-keep" href="http://localhost:4000/tags/#kubernetes"><span class="octicon octicon-tag"></span>&nbsp;kubernetes</a>
+                    
+                </span>
+            </p>
+          </header>
+          <hr class="boundary">
+          <article>
+            <ul id="markdown-toc">
+  <li><a href="#create-kubernetes-cluster" id="markdown-toc-create-kubernetes-cluster">Create Kubernetes cluster</a>    <ul>
+      <li><a href="#create-resource-group-to-host-aks-service" id="markdown-toc-create-resource-group-to-host-aks-service">Create resource group to host AKS service</a></li>
+      <li><a href="#generate-ssh-keys-optional" id="markdown-toc-generate-ssh-keys-optional"><em>Generate SSH keys [optional]</em></a></li>
+      <li><a href="#create-aks-service" id="markdown-toc-create-aks-service">Create AKS service</a></li>
+      <li><a href="#install-kubectl-cli" id="markdown-toc-install-kubectl-cli">Install kubectl CLI</a></li>
+      <li><a href="#get-aks-credentials" id="markdown-toc-get-aks-credentials">Get AKS credentials</a></li>
+    </ul>
+  </li>
+  <li><a href="#deploy-solr-container-into-aks-pod" id="markdown-toc-deploy-solr-container-into-aks-pod">Deploy Solr container into AKS pod</a>    <ul>
+      <li><a href="#deploy-solr-application-instance" id="markdown-toc-deploy-solr-application-instance">Deploy Solr application instance</a></li>
+      <li><a href="#deploy-service-load-balancer-instance" id="markdown-toc-deploy-service-load-balancer-instance">Deploy service load balancer instance</a></li>
+    </ul>
+  </li>
+  <li><a href="#populate-managed-index-schema" id="markdown-toc-populate-managed-index-schema">Populate managed index schema</a></li>
+  <li><a href="#optional-install-self-signed-ssl-cert-into-win-ca-root" id="markdown-toc-optional-install-self-signed-ssl-cert-into-win-ca-root"><em>[optional] Install self-signed SSL cert into Win CA root</em></a></li>
+  <li><a href="#optional-use-namespaces-for-different-environments" id="markdown-toc-optional-use-namespaces-for-different-environments"><em>[optional] Use namespaces for different environments</em></a>    <ul>
+      <li><a href="#create-namespace-for-testing-environment" id="markdown-toc-create-namespace-for-testing-environment">Create namespace for testing environment</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p>Consult <a href="https://kubernetes.io/docs/home/">Kubernetes documentation</a> to learn more about it and <code class="highlighter-rouge">kubectl</code> options. Refer to Azure <a href="https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough">AKS tutorial</a> for more details on the service.<br />
+This exercise uses <a href="https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest">Azure CLI</a> commands.</p>
+
+<blockquote>
+  <p>This exercise assumes you have created a docker image and made it available either through <a href="/2017-09-25/run-your-container-in-azure/">Azure ACR</a> or using other image hosting service.</p>
+</blockquote>
+
+<blockquote>
+  <p>All commands in this article were tested using Bash on Windows available in Win 10 Fall Creators Update.</p>
+</blockquote>
+
+<h2 id="create-kubernetes-cluster">Create Kubernetes cluster</h2>
+<p>This step follows instructions from <a href="https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough">AKS tutorial</a> with minor tweaks.</p>
+
+<h3 id="create-resource-group-to-host-aks-service">Create resource group to host AKS service</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>az group create <span class="nt">--name</span> akstest <span class="nt">--location</span> westus2
+</code></pre></div></div>
+
+<h3 id="generate-ssh-keys-optional"><em>Generate SSH keys [optional]</em></h3>
+<p>Navigate to <code class="highlighter-rouge">.ssh</code> folder and execute <code class="highlighter-rouge">ssh-keygen</code>. Follow instructions to create ssh keys.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh-keygen <span class="nt">-N</span> P@ssword1 <span class="nt">-f</span> aks_id
+</code></pre></div></div>
+<p>This command will create <code class="highlighter-rouge">aks_id</code> and <code class="highlighter-rouge">aks_id.pub</code> files.</p>
+
+<h3 id="create-aks-service">Create AKS service</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>az aks create <span class="nt">--resource-group</span> akstest <span class="nt">--name</span> myK8sCluster <span class="nt">--agent-count</span> 1 <span class="nt">--ssh-key-value</span> ~/.ssh/aks_id.pub
+</code></pre></div></div>
+<p>The command takes several minutes to complete and creates several resources:</p>
+<ul>
+  <li>Azure service principal for cluster authentication. You can find it in your Azure Active Directory service at App registrations blade. Once there select My Apps to limit output to your account principals.<br />
+The principal gets also added to <code class="highlighter-rouge">~/.azure/acsServicePrincipal.json</code> file.</li>
+  <li><code class="highlighter-rouge">myK8sCluster</code> service that will be added to <code class="highlighter-rouge">akstest</code> group.</li>
+  <li><code class="highlighter-rouge">MC_&lt;groupName&gt;_&lt;aksName&gt;_&lt;location&gt;</code> group with all resources necessary for Managed Kubernetes cluster. In this example it will be <code class="highlighter-rouge">MC_akstest_myK8sCluster_westus2</code>.</li>
+</ul>
+
+<h3 id="install-kubectl-cli">Install kubectl CLI</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>az aks install-cli
+</code></pre></div></div>
+
+<h3 id="get-aks-credentials">Get AKS credentials</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>az aks get-credentials <span class="nt">--resource-group</span> akstest <span class="nt">--name</span> myK8sCluster
+</code></pre></div></div>
+<p>This command will merge Kubernetes cluster configuration into <code class="highlighter-rouge">~/.kube/config</code> file. You can view it by running command:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl config view
+</code></pre></div></div>
+
+<h2 id="deploy-solr-container-into-aks-pod">Deploy Solr container into AKS pod</h2>
+<p>Next step is to deploy application instance (in this example Solr pod) and service instance to allow communication with application pod.</p>
+
+<h3 id="deploy-solr-application-instance">Deploy Solr application instance</h3>
+<p>Creat Kubernetes deployment manifest (<code class="highlighter-rouge">solr-app-deployment.yml</code>) with the following content. Make sure to modify <code class="highlighter-rouge">image</code> parameter to point to your container image.</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1beta1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">solr-app</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="s">1</span>
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">solr-app</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">solr-app</span>
+        <span class="na">image</span><span class="pi">:</span> <span class="s">myregistry.azurecr.io/solrssl-flex:6.6.0</span>
+        <span class="na">command</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">create-basic-cores.sh"</span><span class="pi">]</span>
+        <span class="na">ports</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="s">8983</span>
+          <span class="na">name</span><span class="pi">:</span> <span class="s">solr</span>
+</code></pre></div></div>
+<p>Deploy manafest using <code class="highlighter-rouge">kubectl</code>.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> ./solr-app-deployment.yml
+</code></pre></div></div>
+<p>Verify that deployment is created:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get deployment
+</code></pre></div></div>
+<p>Verify that pod for solr application is created and running:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get pods
+</code></pre></div></div>
+<p>If pod gets an error, you can try to access its logs:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl logs &lt;podName&gt;
+</code></pre></div></div>
+
+<h3 id="deploy-service-load-balancer-instance">Deploy service load balancer instance</h3>
+<p>Create manifest file to describe service instance <code class="highlighter-rouge">solr-service.yml</code>. Type <code class="highlighter-rouge">LoadBalancer</code> creates an external IP for the service so that you can access it from outside of AKS.</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">solr-app</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">solr-app</span>
+    <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">LoadBalancer</span>
+  <span class="na">ports</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="s">8983</span>
+    <span class="na">targetPort</span><span class="pi">:</span> <span class="s">8983</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">solr-app</span>
+</code></pre></div></div>
+<p>Deploy service into AKS cluster.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> ./solr-service.yml
+</code></pre></div></div>
+<p>Verify that service is up and running and has external IP:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get services
+</code></pre></div></div>
+
+<h2 id="populate-managed-index-schema">Populate managed index schema</h2>
+<p>Sitecore 9 requires managed-schema to be populated with fields before you can start indexing Sitecore items. You can do this by calling <code class="highlighter-rouge">/sitecore/admin/PopulateManagedSchema.aspx?indexes=all</code> service page.</p>
+
+<h2 id="optional-install-self-signed-ssl-cert-into-win-ca-root"><em>[optional] Install self-signed SSL cert into Win CA root</em></h2>
+<p>This step is necessary if you use <a href="/2017-09-24/flexible-solr-container-image-for-sitecore/">Solr image that creates self-signed SSL cert</a>. 
+Copy SSL cert from pod into your local machine:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl cp &lt;podName&gt;:/opt/solr/server/etc/solr-ssl.keystore.jks ~/solr-ssl.keystore.jks
+</code></pre></div></div>
+<p>Copy cert from Ubuntu on Windows to your Windows (WLS) file system:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cp ~/solr-ssl.keystore.jks /mnt/c/temp/solr-ssl.keystore.jks
+</code></pre></div></div>
+<p>Install SSL cert into Windows CA root using <a href="https://gist.github.com/ivansharamok/6d22cde83944117c349d247137f10100">install-solrssl.ps1</a> PS script.</p>
+
+<h2 id="optional-use-namespaces-for-different-environments"><em>[optional] Use namespaces for different environments</em></h2>
+<p>By default everything you create in your AKS cluster goes into <code class="highlighter-rouge">default</code> namespace. Kubernetes allows to isolate or group resources through <a href="https://kubernetes.io/docs/tasks/administer-cluster/namespaces-walkthrough/">namespaces</a>.</p>
+<h3 id="create-namespace-for-testing-environment">Create namespace for testing environment</h3>
+<p>Create manifest file (<code class="highlighter-rouge">namespace-testing.json</code>) that describes <code class="highlighter-rouge">testing</code> namespace.</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"kind"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Namespace"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"apiVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"v1"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"metadata"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"testing"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"labels"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"playground"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>Deploy <code class="highlighter-rouge">testing</code> namespace into AKS cluster:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl create <span class="nt">-f</span> namespace-testing.json
+</code></pre></div></div>
+<p>View available namespaces in your AKS cluster:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get namespace <span class="nt">--show-labels</span>
+</code></pre></div></div>
+<p>Now you can deploy apps and services into testing namespace of you AKS cluster by adding <code class="highlighter-rouge">--namespace testing</code> parameter to <code class="highlighter-rouge">kubectl</code> command.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> ./solr-app-deployment.yml <span class="nt">--namespace</span> testing
+</code></pre></div></div>
+
+
+          </article>
+          <hr class="boundary">
+          <div id="post-share">
+              <!-- Go to www.addthis.com/dashboard to customize your tools -->
+              <div class="addthis_inline_share_toolbox"></div>
+          </div>
+        </div>
+        <div class="pad-min"></div>
+        <div id="post-comment" class="sheet post">
+            <div id="disqus_thread"></div>
+        </div>
+    </div>
+    <div class="content-navigation col-lg-3">
+      <div class="shadow-bottom-center" >
+        <div class="content-navigation-toc">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Toc
+            </div>
+            <div class="content-navigation-list toc"></div>
+        </div>
+        <div class="content-navigation-tag">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Tags
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#indexing"><span class="octicon octicon-tag"></span>&nbsp;indexing</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#docker"><span class="octicon octicon-tag"></span>&nbsp;docker</a>
+                    </li>
+                    
+                    <li>
+                        <a href="http://localhost:4000/tags#kubernetes"><span class="octicon octicon-tag"></span>&nbsp;kubernetes</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="content-navigation-related">
+            <div class="content-navigation-header">
+                <span class="octicon octicon-list-unordered"></span>&nbsp;Related
+            </div>
+            <div class="content-navigation-list">
+                <ul>
+                    
+
+                    
+
+                    
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-11-24/publishing-service-in-docker-container/">Sitecore Publishing Service in Docker Windows Container</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-09-25/run-your-container-in-azure/">Run your container in Azure</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-09-24/flexible-solr-container-image-for-sitecore/">Flexible Solr container image for Sitecore</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-09-20/run-solr+ssl-in-docker-container-with-sitecore-indexes/">Run Solr + SSL in Docker container with Sitecore indexes</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-01-05/configure-sitecore-indexes-for-centralized-indexing-solution/">Configure Sitecore indexes for centralized indexing solution</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2017-01-04/configure-basicauth-for-solr-provider/">Configure BasicAuthentication for Solr provider with Sitecore</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-12-30/script-sitecore-installation-using-solrcloud-with-switchonrebuild-index/">MSDeploy Sitecore installation using SolrCloud with SwitchOnRebuild index</a>
+                            </li>
+                        
+                            <li>
+                                <a href="http://localhost:4000/2016-12-10/customize-sitecore-azuretoolkit-deployment/">Customize Sitecore Azure toolkit deployment</a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- Go to www.addthis.com/dashboard to customize your tools -->
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5a24c44d9a3c0d22"></script>
+    </div>
+    <div class="page-scrollTop" data-toggle="tooltip" data-placement="top" title="Top">
+        <a href="javascript:void(0);">
+            <div class="arrow"></div>
+            <div class="stick"></div>
+        </a>
+    </div>
+</div>
+
+    <footer  class="footnote footnote-tiffany">
+        <div class="container">
+                <a class="foot-item" href="mailto:" target="_blank"><span class="octicon octicon-mail"></span></a>
+                <a class="foot-item" href="https://github.com/ivansharamok" target="_blank"><span class="octicon octicon-mark-github"></span></a>
+                <a class="foot-item" href="http://localhost:4000/feed.xml" target="_blank"><span class="octicon octicon-rss"></span></a>
+                <!-- <a class="foot-item" href="http://localhost:4000/link/"><span class="octicon octicon-link-external"></span></a> -->
+                &nbsp;
+                <a href="http://blog.sharamok.com/"><span class="word-keep">&copy; Ivan Sharamok</span></a>
+        </div>
+        <div class="credit">
+            Credit to WakelessDragon for <a href="https://github.com/WakelessDragon/blog">Jekyll site theme</a>.
+        </div>
+    </footer>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/script.js"></script>
+    <script type="text/javascript" src="http://localhost:4000/static/js/post.js"></script>
+    
+
+
+</body>
+</html>
