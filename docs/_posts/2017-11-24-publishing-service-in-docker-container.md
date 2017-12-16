@@ -9,7 +9,7 @@ date: 2017-11-24
 * TOC
 {:toc}
 
-The article describes how I managed to put [Sitecore Publishing Service][pub-service] into a Docker Windows container. Docker image [microsoft/windowsservercore][winservercore] was used to create an image with the Publishing Service.
+The article describes how I managed to put [Sitecore Publishing Service][pub-service] into a Docker Windows container. Docker image [microsoft/windowsservercore][winservercore] was used to create an image with the Publishing Service. 
 
 >To run Sitecore Publishing Service in a Docker container make sure you switch Docker host to use Windows Containers.
 

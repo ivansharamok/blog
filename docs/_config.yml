@@ -5,14 +5,14 @@ markdown: kramdown
 kramdown:
   input:  GFM
   syntax_highlighter: rouge
-
+#excerpt_separator: "<!-- more -->"
 
 paginate: 10
 paginate_path: ":num"
 baseurl: ""
 
-plugins:
-  - jekyll-paginate
+#plugins:
+#  - jekyll-paginate
 
 defaults:
   -
