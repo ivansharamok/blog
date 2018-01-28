@@ -17,7 +17,6 @@ Scripts and configs:
 * [Dockerfile Zk][dockerfile-zk]
 * [scripts Zk][scripts-zk]
 * [Dockerfile Solr][dockerfile-solr]
-* [configs Solr][configs-solr]
 
 ## Create Kubernetes cluster
 Follows instructions in [AKS tutorial][aks-tutorial] or [my previous post][solr-in-aks]. I used AKS cluster version 1.8.2.
@@ -165,4 +164,3 @@ kubectl exec <podName> -- sh -c 'echo $(hostname -d)'
 [dockerfile-zk]: {{ "/resources/media/2018-01-27-solrcloud-in-aks-dev/zk/Dockerfile" | relative_url }}
 [scripts-zk]: {{ "/resources/media/2018-01-27-solrcloud-in-aks-dev/zk" | prepend: site.github_blog_root }}
 [dockerfile-solr]: {{ "/resources/media/2018-01-27-solrcloud-in-aks-dev/solr/Dockerfile" | relative_url }}
-[configs-solr]: {{ "/resources/media/2018-01-27-solrcloud-in-aks-dev/solr/scripts" | prepend: site.github_blog_root }}
