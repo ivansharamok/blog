@@ -182,7 +182,7 @@ kubectl exec <podName> -- sh -c 'echo $(hostname -d)'
 
 ## Resources
 
-* Zookeeper on CentOS container image. If you want to use [CentOS](https://www.centos.org/) container for Zk, take a look into [paulbrown/zookeeper example][zk-centos].
+* Zookeeper on CentOS container image. If you want to use [CentOS](https://www.centos.org/) container for Zk, take a look into [paulbrown/zookeeper][zk-centos] image. The scripts for Zk image borrowed from it.
 * [Solr cloud on local Docker instance](https://hub.docker.com/r/hardikdocker/solrcloud-zookeeper-docker/).
 * [Kubernetes StatefulSets](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/).
 * [Kubernetes services](https://kubernetes.io/docs/concepts/services-networking/service/).
