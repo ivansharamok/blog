@@ -13,6 +13,7 @@ This example describes how to run Solr cloud cluster + zookeeper ensemble in [Ku
 >Provided example was tested with AKS cluster version 1.8.2, Solr 6.6.2 and Zookeeper 3.4.11.
 
 >TL;TR
+
 Scripts and configs:
 
 * [Dockerfile Zk][dockerfile-zk]
