@@ -23,7 +23,11 @@ Scripts and configs:
 
 Follows instructions in [AKS tutorial][aks-tutorial] or [my previous post][solr-in-aks]. I used AKS cluster version 1.8.2.
 
-## *[Optional] Build Zookeeper Docker image*
+## Build Zookeeper Docker image
+
+ Using [Dockerfile Zk][dockerfile-zk] build Zk Docker image and upload to your Docker image repository that is accessible to AKS. I used [Azure Container Registry (ACR)][acr-doc].
+
+## *[Optional] Build Solr Docker image*
 
 This example uses `solr:6.6-alpine` image from [official solr repo](https://hub.docker.com/_/solr/) image. If you want to pack custom configuration into Solr image, you need to build a custom image and upload into the image registry (e.g. ACR). See example in in [flexible solr container][solr-flex] article.
 
