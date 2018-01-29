@@ -16,16 +16,12 @@ This example describes how to run Solr cloud cluster + zookeeper ensemble in [Ku
 Scripts and configs: 
 * [Dockerfile Zk][dockerfile-zk]
 * [scripts Zk][scripts-zk]
-* [Dockerfile Solr][dockerfile-solr]
 
 ## Create Kubernetes cluster
 Follows instructions in [AKS tutorial][aks-tutorial] or [my previous post][solr-in-aks]. I used AKS cluster version 1.8.2.
 
-## Build Zookeeper Docker image
-Using [Dockerfile Zk][dockerfile-zk] build Zk Docker image and upload to your Docker image repository that is accessible to AKS. I used [Azure Container Registry (ACR)][acr-doc].
-
-## Build Solr Docker image
-Using [Dockerfile Solr][dockerfile-solr] build Solr Docker image and upload to your Docker image repository that is accessible to AKS. In this example - ACR.
+## *[Optional Build Zookeeper Docker image*
+This example uses `solr:6.6-alpine` image from [official solr repo](https://hub.docker.com/_/solr/) image. If you want to pack custom configuration into Solr image, you need to build a custom image and upload into the image registry (e.g. ACR). See example in in [flexible solr container][solr-flex] article.
 
 ## Configure AKS secret to pull images
 If you store images in a private registry, you need to create a Kubernetes secret with credentials that will be used to pull images.
@@ -54,9 +50,9 @@ kubectl get secret
 ```
 
 ## Create Zookeeper ensemble
-Use [zookeeper-ephemeral.yaml][zk-yaml] to create Zk ensemble in AKS.
+Use [zookeeper.yaml][zk-yaml] to create Zk ensemble in AKS.
 ```bash
-kubectl apply -f zookeeper-ephemeral.yaml
+kubectl apply -f zookeeper.yaml
 ```
 
 Check whether Zk pods got created.
@@ -65,9 +61,9 @@ kubectl get pods
 ```
 
 ## Create Solr cloud cluster
-Use [solrcloud-ephemeral.yaml][solr-yaml] to create Solr cluster in AKS.
+Use [solrcloud.yaml][solr-yaml] to create Solr cluster in AKS.
 ```bash
-kubectl apply -f solrcloud-ephemeral.yaml
+kubectl apply -f solrcloud.yaml
 ```
 Verify that pods got created and running.
 
@@ -159,8 +155,8 @@ kubectl exec <podName> -- sh -c 'echo $(hostname -d)'
 [zk-centos]: https://hub.docker.com/r/paulbrown/zookeeper/
 [acr-auth]: https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-aks?#access-with-kubernetes-secret
 [solr-in-aks]: {% post_url 2017-11-07-run-solr-container-in-azure-kubernetes-cluster %}
-[zk-yaml]: {{ "/resources/media/2018-01-27-solrcloud-in-aks-dev/kube/zookeeper-ephemeral.yaml" | relative_url }}
-[solr-yaml]: {{ "/resources/media/2018-01-27-solrcloud-in-aks-dev/kube/solrcloud-ephemeral.yaml" | relative_url }}
+[zk-yaml]: {{ "/resources/media/2018-01-27-solrcloud-in-aks-dev/kube/zookeeper.yaml" | relative_url }}
+[solr-yaml]: {{ "/resources/media/2018-01-27-solrcloud-in-aks-dev/kube/solrcloud.yaml" | relative_url }}
 [dockerfile-zk]: {{ "/resources/media/2018-01-27-solrcloud-in-aks-dev/zk/Dockerfile" | relative_url }}
 [scripts-zk]: {{ "/resources/media/2018-01-27-solrcloud-in-aks-dev/zk" | prepend: site.github_blog_root }}
-[dockerfile-solr]: {{ "/resources/media/2018-01-27-solrcloud-in-aks-dev/solr/Dockerfile" | relative_url }}
+[solr-flex]: {% post_url 2017-09-24-flexible-solr-container-image-for-sitecore %}

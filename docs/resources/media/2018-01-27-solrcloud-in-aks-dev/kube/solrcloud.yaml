@@ -35,7 +35,7 @@ spec:
         fsGroup: 8983
       containers:
       - name: solr
-        image: "isregistry.azurecr.io/solrcloud-flex:6.6"
+        image: "solr:6.6-alpine"
         imagePullPolicy: IfNotPresent
         ports: 
         - containerPort: 8983
@@ -44,5 +44,3 @@ spec:
         - sh
         - -c
         - solr start -f -c -z zk-0.zk.default.svc.cluster.local:2181,zk-1.zk.default.svc.cluster.local:2181,zk-2.zk.default.svc.cluster.local:2181
-      imagePullSecrets:
-      - name: acr-isregistry-auth
