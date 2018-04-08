@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Prepare Sitecore CD role for experience data collection
+title: Tune Sitecore CD role for experience data collection
 tags: sitecore-cd performance data-collection
 categories: performance experience-analytics azure
 date: 2018-04-07
