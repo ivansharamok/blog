@@ -16,7 +16,7 @@ If you observe page response time degradation on Sitecore CD role that matches c
 For Azure PaaS solutions, you can use [Sitecore-ThreadPool-Configurator][sc-threadpool-configurator] plugin.
 
 ## Story
-I got involved in troubleshooting a few performance issues reported by several customers. The environments were different (VM-based vs. Azure WebApp) and scenarios didn't match (steady traffic vs. influx of traffic) and yet the underlying problem was reported to be the same - slow page response time on CD instances.  
+I got involved in troubleshooting a few performance issues reported by several customers (Sitecore 8). The environments were different (VM-based vs. Azure WebApp) and scenarios didn't match (steady traffic vs. influx of traffic) and yet the underlying problem was reported to be the same - slow page response time on CD instances.  
 With steady traffic it was possible to observe issue occurrence pattern while with traffic surge the issue was observed but the pattern wasn't obvious.
 
 ## Discovery
@@ -42,6 +42,8 @@ In the end page response time graph showed this:
 ![response time graph #1][response-time-graph-1]
 
 ## Solution 1
+>See [Application Remarks](#application-remarks) for Sitecore 9 versions.
+
 Since each CD instances queries out-of-proces session store, one can configure some CD roles to be dedicated instances to process expired sessions and let other CD roles to focus on handling incoming visitors' traffic.
 >At the moment of writing this post only Redis sessions state provider had configuraton setting that allowed to disable session pulling mechanism. Other providers (i.e. SQL and MongoDB) did not have such sessing out of the box.
 
@@ -50,6 +52,8 @@ This solution is preferred approach as it allows to move session processing work
 However, if you use VM-based environment that can take a long time (i.e. >1 hour) to setup dedicated CD instances or have other restrictions that do not allow you to add more CD instances, you can explore Solution 2.
 
 ## Solution 2
+>See [Application Remarks](#application-remarks) for Sitecore 9 versions.
+
 Since the issue happens because application artificially creates traffic surge by issuing lots of `/SESSION END` requests, we can allocate additional threads for the application upfront in order to help it process these types of requests faster.  
 This can be done by setting `minWorkerThreads`, `minIoThreads`, `maxWorkerThreads` and `maxIoThreads` on `<processModel>` section in machine.config file. The configuration would look like this:
 ```xml
@@ -71,6 +75,27 @@ The page response time graph looked like this:
 
 ## Considerations
 Configuring ASP.NET application to pre-create a number of threads can help to mitigate performance degradation caused by surging requests. However, it's important to understand that by pre-allocating resources to handle certain condition, we shift responsibility from one area to another. In this example application was no longer queueing requests as there were more available threads to accept incoming requests and therefore process them faster. The faster handling resulted in higher CPU for the time when requests were surging. If you don't have CPU head room, tempering with thread pool can backfire and result in maxed out CPU resource.
+
+## Application remarks
+In Sitecore 9 a new processor was introduced to make application adjust its thread limits dynamically based on available threads.
+```xml
+<pipelines>
+  <initialize>
+    <processor type="Sitecore.Analytics.Pipelines.Loader.StartThreadPoolSizeMonitor, Sitecore.Analytics"/>
+  </initialize>
+</pipelines>
+```
+This processor uses `accelerationRate`, `decelerationRate` parameters to set thread limit adjustment strategy and `updateInterval` parameter to establish frequency with wich the app checks thread availability.
+You can see the following `INFO` record in the log when Sitecore app starts:
+```
+INFO  Initialized ThreadPoolSizeMonitor with parameters accelerationRate: 50, decelerationRate: 1, updateInterval: 00:00:00.5000000
+```
+If you enable `DEBUG` logging level, you'll see the following entry when check occurs:
+```
+DEBUG Min threads: 8, Active threads: 0.
+```
+When thread pool limits are adjusted, you'll see corresponding `DEBUG` log entries.
+
 
 ## Resources
 * [Contention, poor performance, and deadlocks when you make calls to Web services from an ASP.NET application](https://support.microsoft.com/en-in/help/821268/contention-poor-performance-and-deadlocks-when-you-make-calls-to-web-s)
