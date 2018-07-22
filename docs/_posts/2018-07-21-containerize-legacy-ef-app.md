@@ -47,22 +47,7 @@ The app had a dependency on `Al.exe` which is a part of [NetFxTools](https://doc
 There are a few possible solutions to this issue:
 1. Add installation instruction of `NetFxTools` into the `Dockerfile` for your `build` stage.
 2. If WindowsSDK files already exist on your host, you may copy them into `build` stage and set `ToolPath` environment variable to point to `NetFxTools` location within WindowsSDK folder. Dockerfile example:  
-
-```
-FROM microsoft/dotnet-framework:4.7.2-sdk
-SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
-ENV PATH_WITH_WHITESPACES="NETFX 4.5.1 Tools\\"
-ENV ToolPath="C:\\NetFxTools"
-
-RUN mkdir \NetFxTools
-COPY ${PATH_WITH_WHITESPACES} ${ToolPath}
-```
-
-Gist gem:
 {% gist 9277edc1466e78d5bf078ce61df7e635 %}  
-
-Gist script URL:
-<script src="https://gist.github.com/ivansharamok/9277edc1466e78d5bf078ce61df7e635.js"></script>
 
 Build command for the Dockerfile that explicitly points to Dockerfile location and sets build context to `C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A\bin` where WindowsSDK tools are:  
 ```
