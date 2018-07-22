@@ -50,7 +50,6 @@ There are a few possible solutions to this issue:
 ```
 FROM microsoft/dotnet-framework:4.7.2-sdk
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
-# example path to NetFxTools: C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools
 ENV PATH_WITH_WHITESPACES="NETFX 4.5.1 Tools\\"
 ENV ToolPath="C:\\NetFxTools"
 
