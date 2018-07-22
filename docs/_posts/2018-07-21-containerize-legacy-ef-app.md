@@ -3,7 +3,7 @@ layout: post
 title: Solving `password did not match` error while containerizing legacy Entity Framework application
 tags: mta dotnet-app docker
 categories: modernize-traditional-app containers
-date: 2018-04-07
+date: 2018-07-21
 ---
 
 * TOC
@@ -61,8 +61,8 @@ docker build -t netfxtools:4.7.2-sdk -f C:\Users\admin\Documents\projects\netfxt
 
 [docker-mta]: https://goto.docker.com/MTAkit.html
 [mssql-server-linux]: https://store.docker.com/images/mssql-server-linux
-[winauth-gmsa]: https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/hh831782(v=ws.11)
 [integrated-winauth]: https://success.docker.com/article/modernizing-traditional-dot-net-applications/#integratedwindowsauthentication
+[winauth-gmsa]: https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/hh831782(v=ws.11)
 [lcow]: https://docs.docker.com/docker-for-windows/edge-release-notes/#docker-community-edition-18020-ce-rc1-win50-2018-01-26
 [stackoverflow-ef]: https://stackoverflow.com/questions/30419627/persist-security-info-property-true-and-persist-security-info-property-false
 [multistage-build]: https://docs.docker.com/develop/develop-images/multistage-build/
