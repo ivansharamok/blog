@@ -46,8 +46,8 @@ Another issue I had to tackle while working on this MTA was related to building 
 The app had a dependency on `Al.exe` which is a part of [NetFxTools](https://docs.microsoft.com/en-us/dotnet/framework/tools/). Typically these tools can be found at `C:\Program Files (x86)\Microsoft SDKs\Windows\` path on a machine that has Visual Studio installed or WindowsSDK tools. I tried to use [microsoft/dotnet-framework:3.5-sdk](msft-dotnet-framework) and [microsoft/dotnet-framework:4.7.2-sdk](msft-dotnet-framework) images to build the app but neither of them had `NetFxTools` installed.  
 There are a few possible solutions to this issue:
 1. Add installation instruction of `NetFxTools` into the `Dockerfile` for your `build` stage.
-2. If WindowsSDK files already exist on your host, you may copy them into `build` stage and set `ToolPath` environment variable to point to `NetFxTools` location within WindowsSDK folder. Dockerfile example:
-``` Dockerfile
+2. If WindowsSDK files already exist on your host, you may copy them into `build` stage and set `ToolPath` environment variable to point to `NetFxTools` location within WindowsSDK folder. Dockerfile example:  
+```Dockerfile
 # escape=`
 FROM microsoft/dotnet-framework:4.7.2-sdk
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
