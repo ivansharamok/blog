@@ -48,7 +48,6 @@ There are a few possible solutions to this issue:
 1. Add installation instruction of `NetFxTools` into the `Dockerfile` for your `build` stage.
 2. If WindowsSDK files already exist on your host, you may copy them into `build` stage and set `ToolPath` environment variable to point to `NetFxTools` location within WindowsSDK folder. Dockerfile example:  
 ```
-# escape=`
 FROM microsoft/dotnet-framework:4.7.2-sdk
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 # example path to NetFxTools: C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools
