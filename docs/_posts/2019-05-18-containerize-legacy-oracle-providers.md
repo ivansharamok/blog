@@ -53,11 +53,12 @@ This example Dockerfile is parametrized to allow installation of Oracle drivers 
 
 [ODP.NET Dockerfile][oracle-odpnet-df]
 
-<iframe id="frame" width=80% src="https://rawcdn.githack.com/ivansharamok/dockerfiles-windows-containers/5b8bb23abba51574bab9651689209fc900097651/oracle-drivers/odp.net/Dockerfile" scrolling="yes"></iframe>
+<iframe id="frame" src="https://rawcdn.githack.com/ivansharamok/dockerfiles-windows-containers/5b8bb23abba51574bab9651689209fc900097651/oracle-drivers/odp.net/Dockerfile" scrolling="yes"></iframe>
 
 ### Installing ODBC driver
 
 This example Dockerfile is parametrized to allow installation of ODBC driver for specified version of Oracle client.
+
 [ODBC Dockerfile][oracle-odbc-df]
 
 ### Installing OLEDB driver
