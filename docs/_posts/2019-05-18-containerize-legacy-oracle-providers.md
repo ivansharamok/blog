@@ -49,11 +49,11 @@ This example Dockerfile is parametrized to allow installation of Oracle drivers 
 
 [ASP.NET Dockerfile][oracle-aspnet-df]
 
-<iframe width=80% src="https://rawcdn.githack.com/ivansharamok/dockerfiles-windows-containers/5b8bb23abba51574bab9651689209fc900097651/oracle-drivers/asp.net/Dockerfile" scrolling="yes"></iframe>
+<iframe width="100%" src="https://rawcdn.githack.com/ivansharamok/dockerfiles-windows-containers/5b8bb23abba51574bab9651689209fc900097651/oracle-drivers/asp.net/Dockerfile" scrolling="yes"></iframe>
 
 [ODP.NET Dockerfile][oracle-odpnet-df]
 
-<iframe id="frame" src="https://rawcdn.githack.com/ivansharamok/dockerfiles-windows-containers/5b8bb23abba51574bab9651689209fc900097651/oracle-drivers/odp.net/Dockerfile" scrolling="yes"></iframe>
+<iframe id="frame" src="https://rawcdn.githack.com/ivansharamok/dockerfiles-windows-containers/5b8bb23abba51574bab9651689209fc900097651/oracle-drivers/odp.net/Dockerfile" scrolling="yes" with="100%"></iframe>
 
 ### Installing ODBC driver
 
@@ -61,9 +61,13 @@ This example Dockerfile is parametrized to allow installation of ODBC driver for
 
 [ODBC Dockerfile][oracle-odbc-df]
 
+<iframe width="100%" src="https://rawcdn.githack.com/ivansharamok/dockerfiles-windows-containers/5b8bb23abba51574bab9651689209fc900097651/oracle-drivers/odbc/Dockerfile" scrolling="yes"></iframe>
+
 ### Installing OLEDB driver
 
 [OLEDB Dockerfile][oracle-oledb-df]
+
+<iframe width="100%" src="https://rawcdn.githack.com/ivansharamok/dockerfiles-windows-containers/5b8bb23abba51574bab9651689209fc900097651/oracle-drivers/oledb/Dockerfile" scrolling="yes"></iframe>
 
 ## Additional remarks
 
