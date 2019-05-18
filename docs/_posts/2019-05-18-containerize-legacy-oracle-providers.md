@@ -109,6 +109,8 @@ RUN `
 Classic ASP framework requires a setting `scriptErrorToBrowser` to be turned on in order to view the error that may occur in the application. Here is example how one can turn that setting on:
 
 ```Dockerfile
+Install-WindowsFeature Web-ASP
+Set-WebConfigurationProperty '/system.webServer/asp' -Name scriptErrorSentToBrowser -Value true -Force
 ```
 
 ## Resources
