@@ -8,7 +8,7 @@ date: 2018-04-07
 
 * TOC
 {:toc}
- 
+
 In this post I cover a specific performance issue that requires adjustment of ASP.NET thread pool limits. Changing default thread pool limits in ASP.NET application requires solid understanding of the issue you're trying to solve.
 
 >TL;TR  

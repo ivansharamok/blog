@@ -2,7 +2,7 @@
 layout: post
 title: Solving `password did not match` error while containerizing legacy Entity Framework application
 tags: mta dotnet-app docker
-categories: modernize-traditional-app containers
+categories: modernize-traditional-app containers windows
 date: 2018-07-21
 ---
 
