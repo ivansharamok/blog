@@ -116,7 +116,7 @@ Set-WebConfigurationProperty '/system.webServer/asp' -Name scriptErrorSentToBrow
 ## Resources
 
 * [Docker Reference Architecture: Modernizing Traditional .NET Framework Applications](https://success.docker.com/article/modernizing-traditional-dot-net-applications)
-* [MSFT Forum issue discussion](https://forum.microsoft.com)
+* [MSFT Forum issue discussion][msiexec-av-issue]
 
 [oracle-drivers]: https://github.com/ivansharamok/dockerfiles-windows-containers/tree/master/oracle-drivers
 [oracle-aspnet-df]: https://github.com/ivansharamok/dockerfiles-windows-containers/blob/master/oracle-drivers/asp.net/Dockerfile
